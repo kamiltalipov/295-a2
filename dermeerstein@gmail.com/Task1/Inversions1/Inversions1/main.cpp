@@ -139,7 +139,6 @@ void Array::bubbleSortCount(int left, int right, int &inversions)
 			}
 		}
 	}
-	delete[] bufferCopy;
 }
 
 int Array::InversionCount(int left, int right)
@@ -157,7 +156,7 @@ int Array::InversionCount(int left, int right)
 		bufferCopy[i] = buffer[i];
 	}
 	bubbleSortCount(left, right, count2);
-
+	delete[] bufferCopy;
 	assert(count1 == count2);
 	return count1;
 }
