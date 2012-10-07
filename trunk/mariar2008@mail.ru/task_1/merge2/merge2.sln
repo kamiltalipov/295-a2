@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "merge2", "merge2\merge2.vcxproj", "{A5822349-FE21-43A0-AF02-3586A5D6F9C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5822349-FE21-43A0-AF02-3586A5D6F9C6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A5822349-FE21-43A0-AF02-3586A5D6F9C6}.Debug|Win32.Build.0 = Debug|Win32
+		{A5822349-FE21-43A0-AF02-3586A5D6F9C6}.Release|Win32.ActiveCfg = Release|Win32
+		{A5822349-FE21-43A0-AF02-3586A5D6F9C6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
