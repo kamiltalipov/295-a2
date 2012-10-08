@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Heap", "Heap\Heap.vcproj", "{AA5A5C50-25AB-42B9-A456-FC1C1EE8397D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA5A5C50-25AB-42B9-A456-FC1C1EE8397D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA5A5C50-25AB-42B9-A456-FC1C1EE8397D}.Debug|Win32.Build.0 = Debug|Win32
+		{AA5A5C50-25AB-42B9-A456-FC1C1EE8397D}.Release|Win32.ActiveCfg = Release|Win32
+		{AA5A5C50-25AB-42B9-A456-FC1C1EE8397D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
