@@ -53,6 +53,7 @@ public:
 
     class iterator
     {
+    private:
         HashTable *table;
         int index;
         lists::iterator object;
@@ -150,7 +151,9 @@ public:
         {
             if (s == *i)
             {
+                size--;
                 data[h].erase(i);
+                MemoryCheck();
                 break;
             }
         }
