@@ -4,13 +4,10 @@
 
 using namespace std;
 
-int n;
-int Answer = 0;
-
 int Bubble_Sort(vector <int> &Array)
 {
 	int Answer = 0;
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < Array.size(); i++)
 	{
 		for (int j = 0; j < i; j++)
 		{
@@ -24,8 +21,9 @@ int Bubble_Sort(vector <int> &Array)
 	return Answer;
 }
 
-void Merge(int Left, int Right, vector <int> &Main_Array)
+int Merge(int Left, int Right, vector <int> &Main_Array)
 {
+	int Answer = 0;
 	int Middle = (Left + Right) / 2;
 	int Left_Pos = Left, Tmp_Pos = 0, Right_Pos = Middle + 1;
 	vector <int> Temp(Right - Left + 1);
@@ -64,24 +62,25 @@ void Merge(int Left, int Right, vector <int> &Main_Array)
 	{
 		Main_Array[Left + i] = Temp[i];
 	}
+	return Answer;
 }
 
-void Merge_Sort(int Left, int Right, vector <int> &Main_Array)
+int Merge_Sort(int Left, int Right, vector <int> &Main_Array)
 {
 	int Middle = (Left + Right) / 2;
 	if (Left < Right)
 	{
-		Merge_Sort(Left, Middle, Main_Array);
-		Merge_Sort(Middle + 1, Right, Main_Array);
-		Merge(Left, Right, Main_Array);
+		return Merge_Sort(Left, Middle, Main_Array) + Merge_Sort(Middle + 1, Right, Main_Array) + Merge(Left, Right, Main_Array);
 	}
+	else
+		return 0;
 }
 
 int main()
 {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
-	
+	int n;
 	cin >> n;
 	
 	vector <int> Main_Array(n), Copied_Array(n);
@@ -92,8 +91,7 @@ int main()
 		Copied_Array[i] = Main_Array[i];
 	}
 		
-	Merge_Sort(0, n - 1, Main_Array);
-	cout << Answer << endl;
+	cout << Merge_Sort(0, n - 1, Main_Array) << endl;
 	cout << Bubble_Sort(Copied_Array) << endl;
 		
 	fclose(stdin);
