@@ -11,7 +11,7 @@ private:
     lists *data;
     int m;
     int size;
-    unsigned long long hashp;
+    unsigned long long hashpow;
 
     void Reallocate(int newm)
     {
@@ -44,7 +44,7 @@ private:
         unsigned long long result = 1;
         for (int i = 0; i < s.length(); i++)
         {
-            result = result * hashp + s[i];
+            result = result * hashpow + s[i];
         }
         return result % m;
     }
@@ -118,7 +118,7 @@ public:
     HashTable()
     {
         m = 1 << 7;
-        hashp = 37;
+        hashpow = 37;
         data = new lists[m];
         size = 0;
     }
