@@ -7,7 +7,6 @@ using std :: stack;
 using std :: pair;
 using std :: make_pair;
 #include <algorithm>
-using std :: sort;
 using std :: swap;
 using std :: min;
 using std :: max;
@@ -22,6 +21,7 @@ int partition (int a[], int left, int right)
 {
     int x = get_middle (a[left], a[right - 1], a[(right + left) / 2]);
     int i = left, j = right - 1;
+    int pivot_i = -1;
     while (i < j)
     {
         while (a[i] <= x && i < j)
@@ -32,18 +32,18 @@ int partition (int a[], int left, int right)
         if (i < j)
         {
             swap (a[i], a[j]);
+            if (a[i] == x)
+                pivot_i = i;
             ++i;
             --j;
         }
     }
 
-    while (a[i] > x)
+    if (a[i] > x)
         --i;
-    int k;
-    for (k = left; k <= i; ++k)
-        if (a[k] == x)
-            break;
-    swap (a[k], a[i]);
+
+    if (pivot_i >= 0)
+        swap (a[pivot_i], a[i]);
 
     return i;
 }
