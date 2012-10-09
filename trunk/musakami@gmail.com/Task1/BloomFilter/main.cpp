@@ -1,8 +1,62 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <string>
+#include <string.h>
+#include <algorithm>
 #include <list>
 
 using namespace std;
+
+string temp = "rising";
+
+class BloomFilter
+{
+#define ull unsigned long long
+private:
+    vector<bool> data;
+    ull hashpow1, hashpow2;
+    int hashcount;
+    int m;
+
+    pair<ull, ull> hash(string &s)
+    {
+        ull first = 1;
+        ull second = 1;
+        for (int i = 0; i < s.length(); i++)
+        {
+            first = first * hashpow1 + s[i];
+            second = second * hashpow2 + s[i];
+        }
+        return make_pair(first, second);
+    }
+public:
+
+    BloomFilter(int m, int k):
+        m(m), data(m), hashcount(k), hashpow1(23), hashpow2(41) {};
+
+    void Add(string &s)
+    {
+        pair<ull, ull> h = hash(s);
+        for (int i = 0; i < hashcount; i++)
+        {
+            ull position = (h.first + i * h.second) % m;
+            data[position] = true;
+        }
+    }
+
+    bool Find(string &s)
+    {
+        pair<ull, ull> h = hash(s);
+        for (int i = 0; i < hashcount; i++)
+        {
+            ull position = (h.first + i * h.second) % m;
+            if (!data[position])
+                return false;
+        }
+        return true;
+    }
+};
 
 class HashTable
 {
@@ -209,28 +263,55 @@ public:
 
 int main()
 {
-    HashTable table;
-    int n;
-    cout << "n:";
-    cin >> n;
-    cout << "0 - Add 1 - Erase 2 - Find\n";
-    for (int i = 0; i < n; i++)
+    BloomFilter bf(1000000, 10);
+    HashTable ht;
+    ifstream input;
+    input.open("text.txt");
+    string s;
+    while (input >> s)
     {
-        int readable1;
-        string readable2;
-        cin >> readable1 >> readable2;
-        if (readable1 == 0)
-            table.Add(readable2);
-        if (readable1 == 1)
-            table.Erase(readable2);
-        if (readable1 == 2)
-            cout << (table.Find(readable2) ? "Yes": "No") << endl;
+        int i = 0;
+        int j = s.length() - 1;
+        while (i < s.length() && (s[i] < 'a' || s[i] > 'z') && (s[i] < 'A' || s[i] > 'Z'))
+            i++;
+        while (j >= 0 && (s[j] < 'a' || s[j] > 'z') && (s[j] < 'A' || s[j] > 'Z'))
+            j--;
+        if (j >= i)
+        {
+            s = s.substr(i, j - i + 1);
+            for (int k = 0; k < s.length(); k++)
+                s[k] = tolower(s[k]);
+            bf.Add(s);
+            ht.Add(s);
+        }
     }
-    cout << table.CountCollision() << endl;
-    for (HashTable::iterator i = table.begin(); i != table.end(); i++)
+    input.close();
+    input.open("text2.txt");
+    int count = 0, notfound = 0;
+    while (input >> s)
     {
-        cout << *i << endl;
+        int i = 0;
+        int j = s.length() - 1;
+        while (i < s.length() && (s[i] < 'a' || s[i] > 'z') && (s[i] < 'A' || s[i] > 'Z'))
+            i++;
+        while (j >= 0 && (s[j] < 'a' || s[j] > 'z') && (s[j] < 'A' || s[j] > 'Z'))
+            j--;
+        if (j >= i)
+        {
+            s = s.substr(i, j - i + 1);
+            for (int k = 0; k < s.length(); k++)
+                s[k] = tolower(s[k]);
+            bool bloomcheck = bf.Find(s);
+            bool hashcheck = ht.Find(s);
+            if (!bloomcheck)
+            {
+                cout << s << endl;
+                notfound++;
+            }
+            if (bloomcheck != hashcheck)
+                count++;
+        }
     }
+    cout << count << endl << notfound;
     return 0;
 }
-
