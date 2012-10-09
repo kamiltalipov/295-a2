@@ -14,13 +14,11 @@ public:
     Heap () :
         h ()
     {
-        h.push_back (0);
     }
 
     Heap (const vector<int>& v) :
         h ()
     {
-        h.push_back (0);
         for (int i = 0; i < v.size (); ++i)
             add (v[i]);
     }
@@ -31,43 +29,43 @@ public:
         if (empty ())
             return -1;
 
-        return h[1];
+        return h[0];
     }
     void pop ();
     bool empty () const
     {
-        return h.size () == 1;
+        return h.empty ();
     }
     int size () const
     {
-        return h.size () - 1;
+        return h.size ();
     }
 
 private:
     vector<int> h;
 
-    void siff_up (int i)
+    void sift_up (int i)
     {
-        int parent = i / 2;
-        while (parent > 0 && h[i] < h[parent])
+        int parent = (i - 1) / 2;
+        while (parent >= 0 && h[i] < h[parent])
         {
             swap (h[i], h[parent]);
 
             i = parent;
-            parent = i / 2;
+            parent = (i - 1) / 2;
         }
     }
 
-    void siff_down (int i)
+    void sift_down (int i)
     {
-        int child = 2 * i;
+        int child = 2 * i + 1;
         if (child + 1 < h.size () && h[child] > h[child + 1])
             ++child;
         while (child < h.size () && h[i] > h[child])
         {
             swap (h[i], h[child]);
             i = child;
-            child = 2 * i;
+            child = 2 * i + 1;
 
             if (child + 1 < h.size () && h[child] > h[child + 1])
                 ++child;
@@ -75,10 +73,11 @@ private:
     }
 };
 
+
 void Heap :: add (int x)
 {
     h.push_back (x);
-    siff_up (h.size () - 1);
+    sift_up (h.size () - 1);
 }
 
 void Heap :: pop ()
@@ -86,9 +85,9 @@ void Heap :: pop ()
     if (empty ())
         return;
 
-    swap (h[1], h[h.size () - 1]);
+    swap (h[0], h[h.size () - 1]);
     h.pop_back ();
-    siff_down (1);
+    sift_down (0);
 }
 
 void heap_sort (vector<int>& a)
@@ -101,13 +100,48 @@ void heap_sort (vector<int>& a)
     }
 }
 
-bool is_sorted (const vector<int>& a, const vector<int>& trueSorted)
+class HeapSort
 {
-    if (a.size () != trueSorted.size ())
-        return false;
+public:
+    static void sort (vector<int>& a)
+    {
+        make_heap (a);
+        for (int i = 0; i < a.size (); ++i)
+        {
+            swap (a[0], a[a.size () - i - 1]);
+            sift_down (a, 0, a.size () - i - 1);
+        }
+    }
 
-    for (int i = 0; i < a.size (); ++i)
-        if (a[i] != trueSorted[i])
+private:
+    static void make_heap (vector<int>& a)
+    {
+       for (int i = a.size () - 1; i >= 0; --i)
+            sift_down (a, i, a.size ());
+    }
+
+    static void sift_down (vector<int>& a, int i, int realSize)
+    {
+        int child = 2 * i + 1;
+        if (child + 1 < realSize && a[child] < a[child + 1])
+            ++child;
+        while (child < realSize && a[i] < a[child])
+        {
+            swap (a[i], a[child]);
+            i = child;
+            child = 2 * i + 1;
+
+            if (child + 1 < realSize && a[child] < a[child + 1])
+                ++child;
+        }
+    }
+};
+
+
+bool is_sorted (const vector<int>& a)
+{
+    for (int i = 1; i < a.size (); ++i)
+        if (a[i] < a[i - 1])
             return false;
 
     return true;
@@ -117,18 +151,16 @@ int main ()
 {
     int n;
     cin >> n;
-    vector<int> a (n), copyA (n);
+    vector<int> a (n);
     for (int i = 0; i < n; ++i)
     {
         cin >> a[i];
-        copyA[i] = a[i];
     }
 
-    heap_sort (a);
-    sort (copyA.begin (), copyA.end ());
+    HeapSort :: sort (a);
     for (int i = 0; i < n; ++i)
         cout << a[i] << ' ';
-    if (!is_sorted (a, copyA))
+    if (!is_sorted (a))
         cout << " - Unsorted!\n";
 
     return 0;
