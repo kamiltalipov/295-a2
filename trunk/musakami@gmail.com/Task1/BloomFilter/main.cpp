@@ -8,8 +8,6 @@
 
 using namespace std;
 
-string temp = "rising";
-
 class BloomFilter
 {
 #define ull unsigned long long
