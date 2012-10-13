@@ -146,7 +146,7 @@ int main()
 	char Operation;
 	string Str;
 
-	cout << "0 to add, 1 to find, 2 to delete, anything else to quit\n";
+	cout << "0 to add, 1 to find, 2 to delete, # to quit\n";
 	cin >> Operation >> Str;
 	while (Operation != '#')
 	{
@@ -158,9 +158,9 @@ int main()
 		
 		case '?':
 			if (Table.Str_Exists(Str))
-				cout << "YES\n";
+				cout << "Yes\n";
 			else
-				cout << "NO\n";
+				cout << "No\n";
 			break;
 
 		case '-':
