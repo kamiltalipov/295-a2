@@ -1,6 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+#include < iostream >
+#include < vector >
+#include < cassert >
 
 using namespace std;
 
@@ -107,6 +107,6 @@ int main()
 {
 	check_heapsort();
 
-//	_CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
