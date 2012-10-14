@@ -171,9 +171,12 @@ private:
         string tmp;
         unsigned int realAllAddElem = allAddElem;
         allAddElem = 2;
-		table.resize (newSize);
-		begin_.pos.first = table.end ();
-		begin_.endTable = table.end ();
+		if (newSize > table.size ())
+		{
+			table.resize (newSize);
+			begin_.pos.first = table.end ();
+			begin_.endTable = table.end ();
+		}
         for (vector<list<string> > :: iterator i = table.begin (); i != table.end (); ++i)
                 for (list<string> :: iterator j = i->begin (); j != i->end ();)
                 {
@@ -181,7 +184,12 @@ private:
                     j = i->erase (j);
                     findAndAdd (tmp, true, newSize);
                 }
-
+		if (newSize < table.size ())
+		{
+			table.resize (newSize);
+			begin_.pos.first = table.end ();
+			begin_.endTable = table.end ();
+		}
         
         allAddElem = realAllAddElem;
 		end_.pos.first = table.end ();
