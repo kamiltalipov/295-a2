@@ -8,25 +8,26 @@ struct student{
 	string name, number;
 };
 
-vector <student>* countingSort(vector <student>* arr) {
+student* countingSort(vector <student>& arr) {
 	vector <int> prefixSum(6);
-	for (int i = 0;i < arr->size();++i)	{
-		prefixSum[(arr->begin() + i)->mark]++;
+	memset(&prefixSum[0], 0, sizeof(prefixSum));
+	for (int i = 0;i < arr.size();++i)	{
+		prefixSum[arr[i].mark]++;
 	}
 	for (int i = 3;i < prefixSum.size();++i) {
 		prefixSum[i] = prefixSum[i - 1] + prefixSum[i]; 
 	} // ќтныне prefixSum[i] - место, куда надо добавить следующего ученика с оценкой i; блоки заполн€ютс€ с конца
-	vector <student>* res = new vector <student> (arr->size());
-	for (int i = 0;i < arr->size();i++) {
-		*(res->begin() + (prefixSum[(arr->begin() + i)->mark] - 1)) = *(arr->begin() + i);	
-		prefixSum[(arr->begin() + i)->mark]--;
+	student* res = new student[arr.size()];
+	for (int i = 0;i < arr.size();i++) {
+		res[(prefixSum[arr[i].mark] - 1)] = arr[i];	
+		prefixSum[arr[i].mark]--;
 	}	
 	return res;
-}
+} 
 
 int main() {
 	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+	//freopen("output.txt", "w", stdout);
 	student tmp;
 	int n;
 	vector <student> input;
@@ -35,9 +36,9 @@ int main() {
 		cin >> tmp.number >> tmp.name >> tmp.mark;
 		input.push_back(tmp);
 	}
-	vector <student>* output = countingSort(&input);
-	for (int i = 0;i < output->size();++i) {
-		cout << (output->begin() + i)->number << " " <<(output->begin() + i)->name << " " << (output->begin() + i)->mark << endl;
+	student* output = countingSort(input);
+	for (int i = 0;i < input.size();++i) {
+		cout << (output + i)->number << " " << (output + i)->name << " " << (output + i)->mark << endl;
 	}
 	return 0;
 }
