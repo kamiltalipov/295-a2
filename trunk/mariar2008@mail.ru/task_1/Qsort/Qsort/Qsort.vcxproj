@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3435F073-C40D-4501-8865-719B57066BA8}</ProjectGuid>
+    <ProjectGuid>{C945DDE2-2733-424A-8A47-5427F74376CC}</ProjectGuid>
     <RootNamespace>Qsort</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
