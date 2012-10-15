@@ -8,14 +8,15 @@ class Heap
 {
 public:
 	bool Empty();
+	vector <int> Array;
 	Heap();
 
-	void Heap_Sort(vector <int> &Array);
-	int Pop();
+	void Heap_Sort();
+	void Pop();
 	void Add( int n );
 
 private:
-	vector <int> Array;
+	int size;
 	void Delete();
 	void Sift_Down();
 	void Sift_Up();
@@ -23,19 +24,20 @@ private:
 
 Heap::Heap()
 {
-	Array.push_back(1 << 32 - 1);
+	Array.push_back(1 << 31 - 1);
+	size = 0;
 }
 
 bool Heap::Empty()
 {
-	return Array.size() == 1;
+	return size == 0;
 }
 
 void Heap::Sift_Up()
 {
 
-	int i = Array.size() - 1;
-	while (Array[i] < Array[i / 2])
+	int i = size;
+	while (Array[i] > Array[i / 2])
 	{
 		swap(Array[i], Array[i / 2]);
 		i = i / 2;
@@ -45,56 +47,58 @@ void Heap::Sift_Up()
 void Heap::Sift_Down()
 {
 	int i = 1;
-	int Min = 1;
+	int Max = 1;
 
-	while (((i * 2 + 1) < Array.size()) && ((i * 2) < Array.size()) && (i == Min))
+	while (((i * 2 + 1) <= size) && ((i * 2) < size) && (i == Max))
 	{
-		if (Array[i * 2] < Array[i * 2 + 1])
-			Min = i * 2;
+		if (Array[i * 2] > Array[i * 2 + 1])
+			Max = i * 2;
 		else
-			Min = i * 2 + 1;
+			Max = i * 2 + 1;
 		
-		if (Array[i] > Array[Min])
+		if (Array[i] < Array[Max])
 		{
-			swap(Array[i], Array[Min]);
-			i = Min;
+			swap(Array[i], Array[Max]);
+			i = Max;
 		}
 	}
 	
-	Min = i;
-	if (((i * 2) < Array.size()) && (Array[i * 2] < Array[i]))
+	Max = i;
+	if (((i * 2) <= size) && (Array[i * 2] > Array[i]))
 	{
 		swap(Array[i], Array[i * 2]);
-		Min = i * 2;
+		Max = i * 2;
 	}
 
-	if (((i * 2 + 1) < Array.size()) && (Array[i * 2 + 1] < Array[Min]))
-		swap(Array[Min], Array[i * 2 + 1]);
+	if (((i * 2 + 1) <= size) && (Array[i * 2 + 1] > Array[Max]))
+		swap(Array[Max], Array[i * 2 + 1]);
 }
 
 void Heap::Delete()
 {
-	swap(Array[1], Array[Array.size() - 1]);
-	Array.pop_back();
+	swap(Array[1], Array[size]);
+	//Array.erase(Array.begin());
+	size--;
 	Sift_Down();
 }
 
-int Heap::Pop()
+void Heap::Pop()
 {
-	int Temp = Array[1];
+	//int Temp = Array[1];
 	Delete();
-	return Temp;
+	//return Temp;
 }
 
-void Heap::Heap_Sort (vector <int> &Array)
+void Heap::Heap_Sort ()
 {
 	while (!Empty())
-		Array.push_back(Pop());
+		Pop();
 }
 
 void Heap::Add( int n )
 {
 	Array.push_back(n);
+	size++;
 	Sift_Up();
 }
 
@@ -113,9 +117,9 @@ int main()
 		Heap.Add(x);
 	}
 
-	Heap.Heap_Sort(Array);
-	for(int i = 0; i < Array.size(); i++)
-		cout << Array[i] << " ";
+	Heap.Heap_Sort();
+	for(int i = 1; i < Heap.Array.size(); i++)
+		cout << Heap.Array[i] << " ";
 	cout << endl;
 	fclose(stdin);
 	fclose(stdout);
