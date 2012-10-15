@@ -24,7 +24,7 @@ Heap::Heap()
 Heap::Heap(vector <int> &array)
 {
 	heap=array;
-	size=array.size();
+	size=array.size()-1;
 	Heapify();
 }
 void Heap::Heapify()
@@ -76,7 +76,8 @@ void Heap::Pop()
 void HeapSort(vector <int> &array)
 {
 	Heap heap(array);
-	for(int i=array.size()-2; i>=0; --i)
+	array.resize(array.size()-1);
+	for(int i=array.size()-1; i>=0; --i)
 	{
 		array[i]=heap.Top();
 		heap.Pop();
