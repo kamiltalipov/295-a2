@@ -36,6 +36,7 @@ public:
 		}
 		iterator operator++()
 		{
+			assert(*this!=HashTable->end());
 			++it;
 			if(it==HashTable->table[index].end())
 			{
