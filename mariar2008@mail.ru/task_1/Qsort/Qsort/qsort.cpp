@@ -4,7 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <crtdbg.h>
-#include <vector>
+#include <queue>
+
 
 using namespace std;
 int const MaxN = 10000;
@@ -14,6 +15,7 @@ class Array{
 public:
 	Array(int n);
 	~Array();
+	int KOrdinalStatic(int left, int right, int k);
 	void QSort(int left, int right);
 	void QSort2(); //нерекурсивный qsort
 	void GenTests();
@@ -78,6 +80,23 @@ void Array::partition(int left, int right, int& right_l, int& left_r){
 	}
 }
 
+int Array::KOrdinalStatic(int left, int right, int k){
+	if (right - left <= 1){
+		return buffer[left];
+	}
+	int right_l, left_r;
+	partition(left, right, right_l, left_r);
+	if ((left_r == right_l + 2)&&(k == right_l + 1)){
+		return buffer[right_l + 1];
+	}
+	if (k >= left_r){
+		return KOrdinalStatic(left_r, right, k);
+	}
+	else{
+		return KOrdinalStatic(left, right_l + 1, k);
+	}
+}
+
 void Array::QSort(int left, int right){
 	if (right - left <= 1){
 		return;
@@ -93,23 +112,29 @@ void Array::QSort(int left, int right){
 }
 
 void Array::QSort2(){
-	vector<int>left(1, 0);
-	vector<int>right(1, size);
+	queue<int>left;
+	queue<int>right;
+	left.push(0);
+	right.push(size);
 
 	int i = 0;
 
-	while (i < left.size()){
+	while (left.size() > 0){
 		int right_l, left_r;
-		partition(left[i], right[i], right_l, left_r);
-		if (left_r < right[i]){
-			left.push_back(left_r);
-			right.push_back(right[i]);
+		partition(left.front(), right.front(), right_l, left_r);
+
+		if (left_r < right.front()){
+			left.push(left_r);
+			right.push(right.front());
 		}
-		if (left[i] < right_l){
-			left.push_back(left[i]);
-			right.push_back(right_l + 1);
+		if (left.front() < right_l){
+			left.push(left.front());
+			right.push(right_l + 1);
 		}
-		i++;
+
+		left.pop();
+		right.pop();
+
 	}
 
 }
@@ -139,8 +164,8 @@ int main( void ){
 	//Array ourArray(MaxN);
 	//ourArray.GenTests();
 	
-	int n;
-	cin >> n;
+	int n, k;
+	cin >> n >> k;
 
 	Array ourArray(n);
 	
@@ -148,6 +173,6 @@ int main( void ){
 	ourArray.QSort2();
 	//ourArray.QSort(0, n);
 	ourArray.write();
-	
+	//cout << ourArray.KOrdinalStatic(0, n, k);
 	return 0;
 }
