@@ -171,24 +171,12 @@ public:
 	bloom_filter(double &chance, int number_of_elements)
 	{
 		number_of_hash_functions=-log(chance)/log((double)2)+1;
-		filter.resize(-number_of_elements*log(chance)/log((double)2)/log((double)2));
+		number_of_bits=-number_of_elements*log(chance)/log((double)2)/log((double)2);
+		filter.resize(number_of_bits);
 	}
 	~bloom_filter()
 	{
 		filter.clear();
-	}
-private:
-	vector <bool> filter;
-	int number_of_bits, number_of_hash_functions;
-	pair <unsigned int, unsigned int> hash(string &key)
-	{
-		unsigned int hash1=0, pow1=31, hash2=0, pow2=53;
-		for(int i=0; i<key.length(); ++i)
-		{
-			hash1=hash1*pow1+key[i];
-			hash2=hash2*pow2+key[i];
-		}
-		return make_pair(hash1, hash2);
 	}
 	void add(string &key)
 	{
@@ -204,6 +192,19 @@ private:
 				return false;
 		return true;
 	}
+private:
+	vector <bool> filter;
+	int number_of_bits, number_of_hash_functions;
+	pair <unsigned int, unsigned int> hash(string &key)
+	{
+		unsigned int hash1=0, pow1=31, hash2=0, pow2=53;
+		for(int i=0; i<key.length(); ++i)
+		{
+			hash1=hash1*pow1+key[i];
+			hash2=hash2*pow2+key[i];
+		}
+		return make_pair(hash1, hash2);
+	}
 };
 int main()
 {
@@ -217,6 +218,8 @@ int main()
 		for(int i=s.length()-1; i>=0; --i)
 			if(!(s[i]>='a'&&s[i]<='z'||s[i]>='A'||s[i]<='Z'))
 				s.pop_back();
+			else
+				break;
 		BloomFilter.add(s);
 		HashTable.insert(s);
 	}
