@@ -45,14 +45,14 @@ void Heap::write(){
 	if (!Check()){
 		cout << "FAIL" << endl;
 	}
-	for (int i = 0; i < link.size(); i++){
+	for (int i = link.size() - 1; i >= 0; i--){
 		cout << link[i] << " ";
 	}
 }
 
 bool Heap::Check(){
-	for (int i = 1; i < link.size(); i++){
-		if (link[i] < link[i - 1]){
+	for (int i = link.size() - 1; i > 0; i--){
+		if (link[i] > link[i - 1]){
 			return false;
 		}
 	}
@@ -95,7 +95,7 @@ void Heap::PushDown(int ind){
 
 void Heap::DoHeap(){
 	for (int i = size - 1; i >= 0; i--){
-		PushUp(i);
+		PushDown(i);
 	}
 }
 
@@ -107,12 +107,9 @@ void Heap::DeleteMin(){
 
 void Heap::sort(){
 	DoHeap();
-	vector<int>tmp(link.size());
 	for (int i = 0; i < link.size(); i++){
-		tmp[i] = link[0];
 		DeleteMin();
 	}
-	link = tmp;
 }
 
 void HeapSortVector(int size){
