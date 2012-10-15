@@ -64,6 +64,7 @@ public:
 		}
 		string operator*()
 		{
+			assert(*this!=HashTable->end());
 			return *it;
 		}
 		iterator* operator->()
