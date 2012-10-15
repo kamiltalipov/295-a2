@@ -6,8 +6,6 @@
 using namespace std;
 typedef unsigned long long hash_value_type;
 
-//Это не работает!!!
-
 class Hasher
 {
 public:
@@ -58,13 +56,13 @@ public:
 	{
 	private:
 		friend class HashTable;
-		table_type::const_iterator  table_begin, table_end;
+		const table_type::iterator const table_begin, table_end;
 		table_type::iterator table_it;
 		list < string >::iterator list_it;
 		iterator(const HashTable& ht) : table_begin(ht.table.begin()), table_end(ht.table.end()), table_it(ht.table.begin())
 		{
 			while (table_it != table_end && !table_it->size()) ++table_it;
-			list_it = table_it->size() ? table_it->begin() : table_it->end();
+			list_it = table_it != table_end ? table_it->begin() : list < string >::iterator();
 		}
 		iterator(const HashTable& ht, const table_type::iterator& table_it, const list < string >::iterator& list_it) :
 			table_begin(ht.table.begin()), table_end(ht.table.end()), list_it(list_it), table_it(table_it) {}
@@ -76,10 +74,10 @@ public:
 		const string& operator*() { return *list_it; }
 		const string& operator->() { return *list_it; }
 		bool operator==(const hash_iterator_type &it) { return table_it == it.table_it && it.list_it == list_it; }
-		bool operator!=(const hash_iterator_type &it) { return table_it != it.table_it || it.list_it != list_it; }
+		bool operator!=(const hash_iterator_type &it) { return !(table_it == table_end && it.table_it == table_end) && (table_it != it.table_it || it.list_it != list_it); }
 	};
 	hash_iterator_type begin() const { return iterator(*this); }
-	hash_iterator_type end() const { return iterator(*this, this->table.end(), this->table.back().end()); }
+	hash_iterator_type end() const { return iterator(*this, this->table.end(), list < string >::iterator()); }
 private:
 	Hasher hasher;
 	table_type& table;
@@ -103,15 +101,12 @@ HashTable::iterator HashTable::iterator::operator--(int)
 
 HashTable::iterator& HashTable::iterator::operator++()
 {
-	if (this->list_it == table_end->end()) return *this;
-	if (this->list_it != table_it->end())
-	{
-		++this->list_it;
-	}
-	else
+	if (table_it == table_end) return *this;
+	if (++list_it == table_it->end())
 	{
 		do ++table_it; while (table_it != table_end && !table_it->size());
-		list_it = table_it->size() ? table_it->begin() : table_it->end();
+		if (table_it != table_end)
+			list_it = table_it->begin();
 	}
 	return *this;
 }
@@ -184,8 +179,11 @@ int main()
 {
 	string s;
 	HashTable ht;
-	//HashTable::iterator it = ht.begin();
+	HashTable::iterator it = ht.begin();
 	ht.Add("pumpururum");
+	ht.Add("12345");
+	ht.Add("80931283");
+	ht.Add("uieiuf");
 	cout << ht.Size() << endl;
 	system("pause");
 	return 0;
