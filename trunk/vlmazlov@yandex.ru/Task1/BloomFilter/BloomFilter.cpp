@@ -5,20 +5,18 @@
 #include <cctype>
 using namespace std;
 
-int MAXLEN = 50; // Вряд ли есть слоова длиннее 50 символов
 vector <string> input; 
 
 class BloomFilter {
 private:
 	int size;
 	int hashQuantity;
-	vector <int> basePowers[2];
-	static const int hashBase1 = 31, hashBase2 = 33;
+	int hashBase[2];
     vector <bool> buffer;
 	int preHash(string& s, int hashID);
     int* hash(string& s);
 public:
-	BloomFilter(double probability);// под вопросом
+	BloomFilter(double probability);
 	bool check(string& s);
 	void add(string& s);
 };
@@ -28,21 +26,17 @@ int countWords() {
 }
 
 BloomFilter::BloomFilter(double probability) {
-	basePowers[0].push_back(1);
-	basePowers[1].push_back(1);
-	for (int i = 1;i < MAXLEN;i++) {
-		basePowers[0].push_back(basePowers[0][i - 1] * hashBase1);
-		basePowers[1].push_back(basePowers[1][i - 1] * hashBase2);
-	}
+	hashBase[0] = 31;
+	hashBase[1] = 33;
 	hashQuantity = (-1) * log(probability) / log((double)2);
 	size = hashQuantity * countWords() / log((double)2);
 	buffer.resize(size);
 }
 
 int BloomFilter::preHash(string& s, int hashID) {
-   int res = 0;
-   for (int i=0;i < s.length();i++) {
-      res += s[i] * basePowers[hashID][i];
+   int res = s[0];
+   for (int i = 1;i < s.length();i++) {
+      res += s[i] * hashBase[hashID];
    }
    return res;
 }
@@ -61,13 +55,15 @@ void BloomFilter::add(string& s) {
 	   //cout << *(sHash + j) << " ";
 	   buffer[*(sHash + j)] = 1;
    }
+   delete sHash;
   // cout << endl;
 }
 bool BloomFilter::check(string& s) {
-    int* sHash = hash(s);
+	int* sHash = hash(s);
     for (int j = 0;j < hashQuantity;j++) {
         if (!buffer[*(sHash + j)]) return false;
     }
+	delete sHash;
     return true; 
 }
 
@@ -98,9 +94,17 @@ int main() {
 			s.clear();
 		}
 	}
-	BloomFilter* dict = new BloomFilter(probability);
-	for (int i = 0;i < input.size();i++) {
-		dict->add(input[i]);
+	BloomFilter dict(probability);
+	fclose(stdin);
+	cin >> probability;
+	freopen("WordBase.txt", "r", stdin);
+	while (scanf("%c", &c) == 1) {
+		if (isalnum(c)) s.push_back(c);
+		else if (!s.empty()) {
+			dict.add(s);
+			//cout << s << endl;
+			s.clear();
+		}
 	}
 	fclose(stdin);
 	freopen("input.txt", "r", stdin);
@@ -108,7 +112,7 @@ int main() {
 	while (scanf("%c", &c) == 1) {
 		if (isalnum(c)) s.push_back(c);
 		else if (!s.empty()) {
-			if (dict->check(s)) {
+			if (dict.check(s)) {
 				cout << s << " is probably correct " << endl;
 				FilterFail += checkFilter(s); 
 			} else cout << s << " is incorrect" << endl;
