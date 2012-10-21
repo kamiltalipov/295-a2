@@ -147,11 +147,11 @@ private:
 	{
 		double load_factor=size/size_hash_table;
 		if(load_factor>0.75)
-			reallocation(2*size_hash_table);
+			realloc(2*size_hash_table);
 		if(size_hash_table>4&&load_factor<0.25)
-			reallocation(size_hash_table/2);
+			realloc(size_hash_table/2);
 	}
-	void reallocation(int new_size_hash_table)
+	void realloc(int new_size_hash_table)
 	{
 		int old_size_hash_table=size_hash_table;
 		size_hash_table=new_size_hash_table;
