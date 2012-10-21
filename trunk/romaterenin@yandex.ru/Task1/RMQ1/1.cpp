@@ -5,9 +5,6 @@
 #include<stack>
 using namespace std;
 
-vector <int> new_Array;
-int number_of_inversion_ms,number_of_inversion_bs;
-
 void read_Array (vector <int> &Array){
 	int size;
 	cin>>size;
@@ -16,7 +13,7 @@ void read_Array (vector <int> &Array){
 		cin>>Array[i];
 }
 
-void bubble_sort(vector <int> &Array){
+void bubble_sort(vector <int> &Array,int &number_of_inversion_bs){
 	for(int i=0;i<Array.size();i++)
 		for(int j=i+1;j<Array.size();j++)
 			if(Array[i]>Array[j]){
@@ -25,7 +22,8 @@ void bubble_sort(vector <int> &Array){
 			}
 }
 
-void merge_sort(vector <int> &Array, int left,int right){
+void merge_sort(vector <int> &Array, int left,int right, int &number_of_inversion_ms){
+	
 	if(left==right)
 		return;
 	if(left+1==right)
@@ -37,8 +35,10 @@ void merge_sort(vector <int> &Array, int left,int right){
 		return;
 	}
 	int middle=(left+right)/2;
-	merge_sort(Array,left,middle);
-	merge_sort(Array,middle+1,right);
+	merge_sort(Array,left,middle,number_of_inversion_ms);
+	merge_sort(Array,middle+1,right,number_of_inversion_ms);
+	vector <int> new_Array;
+	new_Array.resize(Array.size());
 	for(int i=left;i<=middle;i++)
 		new_Array[i]=Array[i];
 	int index1=left,index2=middle+1;
@@ -50,20 +50,24 @@ void merge_sort(vector <int> &Array, int left,int right){
 				Array[j+middle-left]=new_Array[j];
 			break;
 		}
-		if(new_Array[index1]>Array[index2])
-			Array[i]=Array[index2],index2++;
-		else
-			Array[i]=new_Array[index1],index1++;
+		if(new_Array[index1]>Array[index2]){
+			Array[i]=Array[index2];
+			index2++;
+		}
+		else{
+			Array[i]=new_Array[index1];
+			index1++;
+		}
 	}
 }
 
 int main(){
 	vector <int> Array_for_ms,Array_for_bs;
+	int number_of_inversion_ms=0,number_of_inversion_bs=0;
 	read_Array(Array_for_ms);
 	Array_for_bs=Array_for_ms;
-	new_Array.resize(Array_for_ms.size());
-	merge_sort(Array_for_ms,0,Array_for_ms.size()-1);
-	bubble_sort(Array_for_bs);
+	merge_sort(Array_for_ms,0,Array_for_ms.size()-1,number_of_inversion_ms);
+	bubble_sort(Array_for_bs,number_of_inversion_bs);
 	if(number_of_inversion_bs>number_of_inversion_ms)
 		cout<<"Number of inversion in bubble_sort MORE than numder of inversion in merge_sort"<<endl;
 	else
