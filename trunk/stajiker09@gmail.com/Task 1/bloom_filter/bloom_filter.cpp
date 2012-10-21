@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <algorithm>
 #include <vector>
@@ -146,11 +147,11 @@ private:
 	{
 		double load_factor=size/size_hash_table;
 		if(load_factor>0.75)
-			reallocation(2*size_hash_table);
+			realloc(2*size_hash_table);
 		if(size_hash_table>4&&load_factor<0.25)
-			reallocation(size_hash_table/2);
+			realloc(size_hash_table/2);
 	}
-	void reallocation(int new_size_hash_table)
+	void realloc(int new_size_hash_table)
 	{
 		int old_size_hash_table=size_hash_table;
 		size_hash_table=new_size_hash_table;
@@ -193,7 +194,7 @@ public:
 		return true;
 	}
 private:
-	vector <bool> filter;
+	vector <int> filter;
 	int number_of_bits, number_of_hash_functions;
 	pair <unsigned int, unsigned int> hash(string &key)
 	{
@@ -213,22 +214,16 @@ int main()
 	bloom_filter BloomFilter(chance, 100000);
 	hash_table HashTable;
 	string s;
-	while(cin>>s)
+	ifstream f("text.txt");
+	while(f>>s)
 	{
-		for(int i=s.length()-1; i>=0; --i)
-			if(!(s[i]>='a'&&s[i]<='z'||s[i]>='A'||s[i]<='Z'))
-				s.pop_back();
-			else
-				break;
 		BloomFilter.add(s);
 		HashTable.insert(s);
 	}
-	int word_in_bloom_filter=0, word_in_hash_table=0, all_word, no_word=0, errors_in_bloom_filter;
-	while(cin>>s)
+	int word_in_bloom_filter=0, word_in_hash_table=0, all_word=0, no_word=0, errors_in_bloom_filter;
+	ifstream f1("text1.txt");
+	while(f1>>s)
 	{
-		for(int i=s.length()-1; i>=0; --i)
-			if(!(s[i]>='a'&&s[i]<='z'||s[i]>='A'||s[i]<='Z'))
-				s.pop_back();
 		++all_word;
 		if(BloomFilter.find(s))
 			++word_in_bloom_filter;
@@ -236,7 +231,7 @@ int main()
 			++word_in_hash_table;
 	}
 	no_word=all_word-word_in_hash_table;
-	errors_in_bloom_filter=word_in_hash_table-word_in_bloom_filter;
+	errors_in_bloom_filter=word_in_bloom_filter-word_in_hash_table;
 	cout<<word_in_hash_table<<' '<<no_word<<' '<<errors_in_bloom_filter;
 	return 0;
 }
