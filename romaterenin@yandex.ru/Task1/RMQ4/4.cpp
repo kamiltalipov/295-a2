@@ -10,27 +10,35 @@ struct student{
 	string surname;
 	int mark;
 };
-vector <pair <string,int> > answer[6];
-void read_Array_couting_sort (vector <student> &Array){
+
+vector <student> read_Array_and_couting_sort (vector <student> &Array){
 	int size;
 	cin>>size;
 	Array.resize(size);
+	int kol_mark[6]={0,0,0,0,0,0};
 	for(int i=0;i<size;i++){
 		cin>>Array[i].nomer>>Array[i].surname>>Array[i].mark;
-		answer[Array[i].mark].push_back(make_pair(Array[i].surname,Array[i].nomer));
+		kol_mark[Array[i].mark]++;
 	}
+	for(int i=3;i<=5;i++)
+		kol_mark[i]+=kol_mark[i-1];
+	vector <student> answer(size);
+	for(int i=size-1;i>=0;i--){
+		answer[kol_mark[Array[i].mark]-1]=Array[i];
+		kol_mark[Array[i].mark]--;
+	}
+	return answer;
+
 }
 
-void write_Array(){
-	for(int i=2;i<6;i++)
-		for(int j=0; j<answer[i].size(); j++)
-			cout<<answer[i][j].second<<" "<<answer[i][j].first<<" "<<i<<endl;
+void write_Array(vector <student> &Array){
+		for(int i=0; i<Array.size(); i++)
+			cout<<Array[i].nomer<<" "<<Array[i].surname<<" "<<Array[i].mark<<endl;
 }
-void counting_sort_student();
 
 int main(){
 	vector <student> students;
-	read_Array_couting_sort(students);
-	write_Array();
+	vector <student> sort_student=read_Array_and_couting_sort(students);
+	write_Array(sort_student);
 	return 0;
 }
