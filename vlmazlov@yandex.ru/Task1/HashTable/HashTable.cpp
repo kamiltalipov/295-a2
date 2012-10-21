@@ -6,7 +6,6 @@
 using namespace std;
 
 const int HashBase = 37, Prime = 1000000007; // Вряд ли в масииве будет больше 10:9 + 7 элементов; по-хорошему, конечно, нужен генератор простых чисел
-int MAXLEN = 50;// максимальная длина слова явно не больше 50
 
 class HashTable;
 
@@ -40,7 +39,6 @@ private:
 	void reallocate();
 	vector <list <string> > buffer;
 	int hash(string& s);
-	vector <int> hashDegrees;
 };	
 
 void HashTable::reallocate() {
@@ -62,18 +60,14 @@ iteratorr::iteratorr(HashTable* Table) {
 
 HashTable::HashTable() {
 	buffer.resize(1000);
-	hashDegrees.resize(MAXLEN);
 	wordsQuantity = 0;
-	hashDegrees[0] = 1;
-	for (int i = 1;i < MAXLEN;i++) {
-		hashDegrees[i] = ((unsigned)hashDegrees[i - 1] * HashBase) % Prime;
-	}
 }
 
 int HashTable::hash(string& s) {
-	int res = 0;
+	int res = 0, hashDegree = 1;
 	for (int i = 0;i < s.length();i++) {
-		res = ((res * hashDegrees[i]) % Prime + s[i]) % Prime;
+		res = (((res * hashDegree) % Prime) + s[i]) % Prime;
+		hashDegree  = ((unsigned)hashDegree * HashBase) % Prime;
 	}
 	return (unsigned)res % buffer.size();
 }
