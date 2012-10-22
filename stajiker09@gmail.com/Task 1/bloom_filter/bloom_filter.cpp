@@ -194,7 +194,7 @@ public:
 		return true;
 	}
 private:
-	vector <int> filter;
+	vector <bool> filter;
 	int number_of_bits, number_of_hash_functions;
 	pair <unsigned int, unsigned int> hash(string &key)
 	{
