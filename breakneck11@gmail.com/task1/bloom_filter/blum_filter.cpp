@@ -32,7 +32,7 @@ void BitSet::SetBit(int bit, bool val)
 
 bool BitSet::GetBit(int bit)
 {
-	if (bit > size) throw new string("Wrong Index");
+	if (bit > size) return false;
 	int n = bit / fsize, pos = bit % fsize;
 	return data[n] & (1 << pos);
 }
