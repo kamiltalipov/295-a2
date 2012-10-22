@@ -2,6 +2,7 @@
 #include<vector>
 #include<algorithm>
 #include <string>
+#include<fstream>
 using namespace std;
 class Hash_table{
 public:
@@ -134,11 +135,11 @@ bool find(string &s){
 	return true;
 }
 int main(){
-//	freopen("vxodnoy.txt","r",stdin);
+	ifstream file1("file1.txt");
 	string s,x;
 	Hash_table table;
 	generate_k();
-	while(cin>>x){
+	while(file1>>x){
 		s="";
 		for(int i=0;i<x.length();i++)
 			if(x[i]>='a'&&x[i]<='z'||x[i]>='A'&&x[i]<='Z')
@@ -146,9 +147,9 @@ int main(){
 		table.insert(s);
 		bloom_filter(s);
 	}
-//	freopen("proverka.txt","r",stdin);
+	ifstream file2("file2.txt");
 	int slov_table=0,unslov_table=0,slov_bf=0,unslov_bf=0,error=0;
-	while(cin>>x){
+	while(file2>>x){
 		s="";
 		for(int i=0;i<x.length();i++)
 			if(x[i]>='a'&&x[i]<='z'||x[i]>='A'&&x[i]<='Z')
