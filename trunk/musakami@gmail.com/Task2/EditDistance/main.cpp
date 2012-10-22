@@ -4,7 +4,7 @@
 #include <vector>
 
 using namespace std;
-
+//USES N^2 MEMORY NOT FINAL VERSION
 int main()
 {
     string a, b;
