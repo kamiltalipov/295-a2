@@ -12,29 +12,27 @@ public:
 	void Pop();
 	void HeapSort();
 private:
-	vector <int> *heap;
+	vector <int> &heap;
 	vector <int> buffer;
 	int size;
 	void Heapify();
 	void SiftUp(int index);
 	void SiftDown(int index);
 };
-Heap::Heap()
+Heap::Heap():heap(buffer)
 {
-	buffer.resize(1);
-	heap=&buffer;
+	heap.resize(1);
 	size=0;
 }
-Heap::Heap(vector <int> &array)
+Heap::Heap(vector <int> &array):heap(array)
 {
-	heap=&array;
 	size=array.size()-1;
 	Heapify();
 }
 void Heap::print()
 {
 	for(int i=1; i<=size; ++i)
-		cout<<(*heap)[i]<<' ';
+		cout<<heap[i]<<' ';
 	cout<<endl;
 }
 void Heap::Heapify()
@@ -46,8 +44,8 @@ void Heap::SiftUp(int index)
 {
 	while(index!=1)
 	{
-		if((*heap)[index]>(*heap)[index/2])
-			swap((*heap)[index], (*heap)[index/2]);
+		if(heap[index]>heap[index/2])
+			swap(heap[index], heap[index/2]);
 		else
 			break;
 		index/=2;
@@ -56,30 +54,30 @@ void Heap::SiftUp(int index)
 void Heap::SiftDown(int index)
 {
 	int next_index=index;
-	if(2*index<=size&&(*heap)[2*index]>(*heap)[next_index])
+	if(2*index<=size&&heap[2*index]>heap[next_index])
 		next_index=2*index;
-	if(2*index+1<=size&&(*heap)[2*index+1]>(*heap)[next_index])
+	if(2*index+1<=size&&heap[2*index+1]>heap[next_index])
 		next_index=2*index+1;
 	if(next_index!=index)
 	{
-		swap((*heap)[index], (*heap)[next_index]);
+		swap(heap[index], heap[next_index]);
 		SiftDown(next_index);
 	}
 }
 void Heap::Push(int value)
 {
 	++size;
-	heap->push_back(value);
+	heap.push_back(value);
 	SiftUp(size);
 }
 int Heap::Top()
 {
-	return (*heap)[1];
+	return heap[1];
 }
 void Heap::Pop()
 {
-	(*heap)[1]=(*heap)[size];
-	heap->pop_back();
+	heap[1]=heap[size];
+	heap.pop_back();
 	--size;
 	SiftDown(1);
 }
@@ -87,11 +85,11 @@ void Heap::HeapSort()
 {
 	while(size)
 	{
-		swap((*heap)[1], (*heap)[size]);
+		swap(heap[1], heap[size]);
 		--size;
 		SiftDown(1);
 	}
-	size=heap->size()-1;
+	size=heap.size()-1;
 }
 bool IsSorted(vector <int> &array)
 {
