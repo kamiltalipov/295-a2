@@ -46,11 +46,20 @@ void quick_sort_nonrecursive(vector <int> &array, int left, int right)
 			Stack.push(make_pair(middle+1, right));
 	}
 }
-int nth_element(vector <int> &array, int position, int left, int right)
+int nth_element(vector <int> &array, int position)
 {
-	swap(array[position], array[right-1]);
-	int new_position=partition(array, left, right);
-	return new_position;
+	int left=0, right=array.size();
+	while(1)
+	{
+		int middle=partition(array, left, right);
+		swap(array[middle], array[right-1]);
+		if(middle==position)
+			return array[position];
+		if(middle<position)
+			left=middle+1;
+		else
+			right=middle;
+	}
 }
 int main()
 {
@@ -69,6 +78,6 @@ int main()
 	for(int i=0; i<n; ++i)
 		cout<<array1[i]<<' ';
 	cout<<endl;
-	cout<<nth_element(array2, 0, 0, n)+1;
+	cout<<nth_element(array2, n/2);
 	return 0;
 }
