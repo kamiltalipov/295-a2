@@ -27,23 +27,43 @@ istream& operator>> (istream& in, student &st)
 	return in;
 }
 
+ostream& operator<< (ostream& out, const student& st)
+{
+	out << st.format << " " << st.mark;
+	return out;
+}
+
+vector < student >* counting_sort(const vector < student > arr)
+{
+	vector < int > indexes(4, 0);
+	for (int i = 0; i < arr.size(); ++i)
+		++indexes[arr[i].mark - 2];
+	for (int i = 1; i < indexes.size(); ++i)
+		indexes[i] += indexes[i - 1];
+	indexes[0] = 0;
+	for (int i = 1; i < indexes.size(); ++i)
+		--indexes[i];
+	vector < student > *ans = new vector < student > (arr.size());
+	for (int i = 0; i < arr.size(); ++i)
+		ans->at(indexes[arr[i].mark - 2]++) = arr[i];
+	return ans;
+}
+
 int main()
 {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 	int n; student stud;
 	scanf("%d\n", &n);
+	vector < student > studs, *ans;
+	student st;
 	for (int i = 0; i < n; ++i)
 	{
-		cin >> stud;
-		lists[stud.mark - 2].push_back(stud);
+		cin >> st;
+		studs.push_back(st);
 	}
-	for (int i = 0; i < 4; ++i)
-	{
-		for (int j = 0; j < lists[i].size(); ++j)
-		{
-			printf("%s%d\n", lists[i][j].format.c_str(), lists[i][j].mark);
-		}
-	}
+	ans = counting_sort(studs);
+	for (int i = 0; i < ans->size(); ++i)
+		cout << ans->at(i) << endl;
 	return 0;
 }
