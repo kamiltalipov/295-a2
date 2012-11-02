@@ -1,91 +1,62 @@
 #include <iostream>
 using std :: cin;
 using std :: cout;
+#include <string>
+using std :: string;
 #include <vector>
 using std :: vector;
+#include <algorithm>
+using std :: max;
 
-
-vector<int> findMaxSubPolyndrom (const vector<int>& a, int leftI, int rightI)
+void findMaxCommonSubseq (const string& a, const string& b,
+                          string& res)
 {
-    static vector<vector<vector<int> > > pol (a.size (), vector<vector<int> > (a.size ()));
-    if (leftI > rightI)
-       return vector<int> ();
-    if (!pol[leftI][rightI].empty ())
-       return pol[leftI][rightI];
-    if (leftI == rightI)
-       return vector<int> (1, a[leftI]);
-    
-    vector<int> res1 = findMaxSubPolyndrom (a, leftI, rightI - 1),
-                res2 = findMaxSubPolyndrom (a, leftI + 1, rightI);
-    if (a[leftI] == a[rightI])
+    vector<vector<int> > ans (a.size () + 1, vector<int> (b.size () + 1, 0));
+    for (size_t i = 0; i < a.size (); ++i)
+        for (size_t j = 0; j < b.size (); ++j)
+        {
+            if (a[i] == a[j])
+                ans[i + 1][j + 1] = ans[i][j] + 1;
+			else
+				ans[i + 1][j + 1] = max (ans[i][j + 1], ans[i + 1][j]);
+        }	
+
+    size_t i = a.size (), j = b.size ();
+	while (i > 0 && j > 0)
     {
-       vector<int> res3 = findMaxSubPolyndrom (a, leftI + 1, rightI - 1);
-       
-       if (res1.size () > res2.size ())
-       {
-          if (res3.size () + 2 > res1.size ())
-          {
-             vector<int> res (res3.size () + 2);
-             res[0] = a[leftI];
-             for (int i = 0; i < res3.size (); ++i)
-                 res[i + 1] = res3[i];
-             res[res3.size () + 1] = a[rightI];
-             
-             pol[leftI][rightI] = res;
-          }
-          else
-             pol[leftI][rightI] = res1;
-       }
-       else
-       {
-          if (res3.size () + 2 > res2.size ())
-          {
-             vector<int> res (res3.size () + 2);
-             res[0] = a[leftI];
-             for (int i = 0; i < res3.size (); ++i)
-                 res[i + 1] = res3[i];
-             res[res3.size () + 1] = a[rightI];
-             
-             pol[leftI][rightI] = res;
-          }
-          else
-             pol[leftI][rightI] = res2;
-       }
-    }
-    else
-    {
-        if (res1.size () > res2.size ())
-           pol[leftI][rightI] = res1;
+        if (a[i - 1] == b[j - 1])
+        {
+            res.push_back (a[i - 1]);
+			--i;
+			--j;
+        }
+		else if (ans[i - 1][j] > ans[i][j - 1])
+            --i;
         else
-           pol[leftI][rightI] = res2;
-    }
-    
-    return pol[leftI][rightI];
+            --j;
+   }
 }
 
-inline void findMaxSubPolyndrom (const vector<int>& a, vector<int>& res)
+inline void findMaxSubPolyndrom (const string& a, const string& revA,
+                                 string& res)
 {
     if (a.empty ())
        return;
-    res = findMaxSubPolyndrom (a, 0, a.size () - 1);     
+    findMaxCommonSubseq (a, revA, res);
 }
 
 int main ()
 {
-    size_t n;
-    cin >> n;
-    vector<int> a (n);
-    for (size_t i = 0; i < n; ++i)
-        cin >> a[i];
-    
-    vector<int> res;
-    findMaxSubPolyndrom (a, res);
-    for (size_t i = 0; i < res.size (); ++i)
-        cout << res[i]  << ' '; 
-    
-    
+	string str;
+    cin >> str;
+	string revStr (str.rbegin (), str.rend ());
+
+    string res;
+    findMaxSubPolyndrom (str, revStr, res);
+    cout << res << '\n';
+
     cin.get ();
     cin.get ();
-    
+
     return 0;
 }
