@@ -26,7 +26,10 @@ int bin_search(vector < pair <int,vector <int> > > Array,int current){
 		else
 			right=middle;
 	}
-	return right;
+	if(Array[right-1].first != current)
+		return right;
+	else
+		return 0;
 }
 
 int main(){
@@ -43,6 +46,8 @@ int main(){
 	for(int i=0;i<Array.size();i++){
 		int x=Array[i];
 		int poz=bin_search(count,x);
+		if(!poz)
+			continue;
 		count[poz].first=x;
 		count[poz].second.clear();
 		if(poz!=1)
