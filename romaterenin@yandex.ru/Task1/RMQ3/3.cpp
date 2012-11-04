@@ -5,36 +5,36 @@ using namespace std;
 
 class Heap{
 public:
-	vector <int> tree;
+	//vector <int> tree;
 	Heap() { }
 
-	void heapify (int pos){
-		while (2 * pos + 1 < tree.size()){
+	void heapify (vector<int> &Array,int pos, int size){
+		while (2 * pos + 1 < size /*tree.size()*/){
 			int t = 2 * pos +1;
-			if (2 * pos + 2 < tree.size() && tree[2 * pos + 2] >= tree[t])
+			if (2 * pos + 2 < size /*tree.size()*/ && Array[2 * pos + 2] >= Array[t])
 				t = 2 * pos + 2;
-			if (tree[pos] < tree[t]) {
-				swap(tree[pos], tree[t]);
+			if (Array[pos] < Array[t]) {
+				swap(Array[pos], Array[t]);
 				pos = t;
 			} 
 			else break;
 		}
 	}
 
-	void heap_make(){
-		for (int i =(int)tree.size()-1; i>=0; i--)
-			heapify(i);
+	void heap_make(vector <int> &Array, int size){
+		for (int i =size-1; i>=0; i--)
+			heapify(Array,i,size);
 	}
-	void heap_sort(vector <int> &Array){
-		tree = Array;
-		heap_make();
-		int n = tree.size();
-		while(n>0){
-			Array[n-1] = tree[0];
-			swap(tree[0],tree[n-1]);
-			n--;
-			tree.pop_back();
-			heapify(0);
+	void heap_sort(vector <int> &Array, int size){
+		//tree = Array;
+		heap_make(Array,size);
+		//int n = tree.size();
+		while(size>0){
+			//Array[size-1] = tree[0];
+			size--;
+			swap(Array[0],Array[size]);
+			//tree.pop_back();
+			heapify(Array,0,size);
 		}
 	}
 };
@@ -71,12 +71,13 @@ int main(){
 	//read_Array(sort_Array);
 	random_Array(sort_Array);
 	Heap heap;
-	heap.heap_sort(sort_Array);
+	heap.heap_sort(sort_Array,sort_Array.size());
 	//write_Array(sort_Array,sort_Array.size());
-	cout<<endl;
+	//cout<<endl;
 	if(check(sort_Array))
 		cout<<"Correct";
 	else
 		cout<<"Uncorrect";
+	cout<<endl;
 	return 0;
 }
