@@ -5,13 +5,12 @@ using namespace std;
 
 class Heap{
 public:
-	//vector <int> tree;
 	Heap() { }
 
 	void heapify (vector<int> &Array,int pos, int size){
-		while (2 * pos + 1 < size /*tree.size()*/){
+		while (2 * pos + 1 < size){
 			int t = 2 * pos +1;
-			if (2 * pos + 2 < size /*tree.size()*/ && Array[2 * pos + 2] >= Array[t])
+			if (2 * pos + 2 < size && Array[2 * pos + 2] >= Array[t])
 				t = 2 * pos + 2;
 			if (Array[pos] < Array[t]) {
 				swap(Array[pos], Array[t]);
@@ -26,14 +25,10 @@ public:
 			heapify(Array,i,size);
 	}
 	void heap_sort(vector <int> &Array, int size){
-		//tree = Array;
 		heap_make(Array,size);
-		//int n = tree.size();
 		while(size>0){
-			//Array[size-1] = tree[0];
 			size--;
 			swap(Array[0],Array[size]);
-			//tree.pop_back();
 			heapify(Array,0,size);
 		}
 	}
@@ -78,6 +73,5 @@ int main(){
 		cout<<"Correct";
 	else
 		cout<<"Uncorrect";
-	cout<<endl;
 	return 0;
 }
