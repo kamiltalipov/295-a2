@@ -43,21 +43,13 @@ int main(){
 	for(int i=0;i<Array.size();i++){
 		int x=Array[i];
 		int poz=bin_search(count,x);
-		if(poz==1){
-			count[poz].first=x;
-			count[poz].second.clear();
-			count[poz].second.push_back(x);
-			if(answer < poz)
-				answer = poz;
-		}
-		else{
-			count[poz].first=x;
-			count[poz].second.clear();
+		count[poz].first=x;
+		count[poz].second.clear();
+		if(poz!=1)
 			count[poz].second=count[poz-1].second;
-			count[poz].second.push_back(x);
-			if(answer < poz)
-				answer = poz;
-		}
+		count[poz].second.push_back(x);
+		if(answer < poz)
+			answer = poz;
 	}
 	write_answer(count,answer);
 	return 0;
