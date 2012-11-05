@@ -14,7 +14,6 @@ int main()
         cin >> k;
         data.push_back(k);
     }
-    dp[0] = -(1 << 31);
     int ans = 0;
     for (int i = 0; i < n; i++)
     {
