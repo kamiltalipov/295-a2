@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class operation {
@@ -14,16 +15,6 @@ public:
 		return this;
 	}
 };
-
-string str (int num) {
-	string res;
-	if (num == 0) return "0";
-	while (num > 0) {
-		res.push_back(num % 10 + '0');
-		num /= 10;
-	}
-	return res;
-}
 
 int Hirschberg(string& s1, string& s2, vector <operation>& ans, int l1, int r1, int l2, int r2) {
 	operation done;
@@ -89,24 +80,27 @@ int Hirschberg(string& s1, string& s2, vector <operation>& ans, int l1, int r1, 
 }
 
 int main() {
-	freopen("input.txt", "r", stdin);
+	ifstream input("input1.txt", ifstream::in);
 	freopen("output.txt", "w", stdout);
 	string s1, s2;
 	vector <operation> ans;
-	cin >> s1 >> s2;
+	getline(input, s1, '\0');
+	input.close();
+	input.open("input2.txt", ifstream::in);
+	getline(input, s2, '\0');
 	cout << Hirschberg(s1, s2, ans, 0, s1.length(), 0, s2.length()) << endl;
 	int inc = 0;
 	for (int i = 0;i < ans.size();i++) {
 		if (ans[i].type == 0) {
-			cout << "Delete " << ans[i].element << " from " << str(ans[i].index + inc) << endl;
+			cout << "Delete " << ans[i].element << " from " << (ans[i].index + inc) << endl;
 			inc--;
 		}
 		if (ans[i].type == 1) {
-			cout << "Add " << ans[i].element << " after " << str(ans[i].index + inc) << endl;
+			cout << "Add " << ans[i].element << " after " << (ans[i].index + inc) << endl;
 			inc++;
 		}
 		if (ans[i].type == 2) {
-			cout << "Substitute " << s1[ans[i].index + inc] << " in " << str(ans[i].index + inc) << " with " << ans[i].element << endl;
+			cout << "Substitute " << s1[ans[i].index + inc] << " in " << (ans[i].index + inc) << " with " << ans[i].element << endl;
 		}
 	}
 	return 0;
