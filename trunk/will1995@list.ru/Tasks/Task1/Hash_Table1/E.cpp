@@ -9,63 +9,77 @@ using namespace std;
 class Hash_Table
 {
 public:
+	class iterator;
+	friend class iterator;
 	void Add (string &Str);
 	void Delete(string &Str);
 	bool Str_Exists(string &Str);
 	int Count_Collisions();
 	Hash_Table();
 	vector <list <string> > myarray;
+	iterator end();
+	iterator begin();
+	void next();
 
 	class iterator
 	{
 	public:
-		int index;
-		list< string >::iterator it;
-		vector <list < string > > &myarray;
+		friend class Hash_Table;
+		Hash_Table *Table;
+		list< string >::iterator elem;
+		vector <list < string > >::iterator single_list;
 
 		string operator *()
 		{
-			return *it;
+			return *elem;
 		}
 	
 		bool operator ==(iterator tocomp)
 		{
-			return (&it == &tocomp.it);
+			return ((this->Table == tocomp.Table)  && (this->single_list == tocomp.single_list) && (this->elem == tocomp.elem));
 		}
 	
 		bool operator !=(iterator tocomp)
 		{
-			return (&it != &tocomp.it);
+			return (!(*this == tocomp));
+		}
+
+		void next()
+		{
+			if (elem != single_list->end())
+				elem++;
+
+			if (elem == single_list->end())
+			{
+				if (single_list == Table->myarray.end())
+				{
+					elem = Table->myarray[Table->myarray.size() - 1].end();
+					return;
+				}
+
+				single_list++;
+				while ((single_list < Table->myarray.end()) && (single_list->empty()))
+					single_list++;
+
+				if (single_list < Table->myarray.end())
+					elem = single_list->begin();
+				else
+					elem = Table->myarray[Table->myarray.size() - 1].end();
+			
+			}
 		}
 
 		iterator operator ++()
 		{
-			it++;
-			if (it == (myarray[index].end()))
-			{
-				index++;
-				while (myarray[index].size() == 0)
-					(index++) % myarray.size();
-				it = myarray[index].begin();
-			}
-			return *this;
-		}
-		
-		iterator end()
-		{
-			int tmp = myarray.size() - 1;
-			while (myarray[tmp].empty())
-				(tmp--);
-			it = myarray[tmp].end();
+			next();
 			return *this;
 		}
 
-		iterator (vector <list < string > > &arr, int ind):
-		myarray(arr), index(ind) 
+		iterator (Hash_Table *Tbl):
+		Table(Tbl)
 		{
-			while (myarray[index].empty())
-				(index++ % myarray.size());
-				it = myarray[index].begin();
+			single_list = Tbl->myarray.begin();
+			elem = single_list->begin();
 		}
 		private:
 	};
@@ -80,6 +94,20 @@ private:
 	void realloc (int new_size);
 };
 
+
+Hash_Table::iterator Hash_Table::end()
+{
+	iterator it(this);
+	it.single_list = myarray.end();
+	it.elem = myarray[myarray.size() - 1].end();
+	return it;
+}
+
+Hash_Table::iterator Hash_Table::begin()
+{
+	iterator it(this);
+	return it;
+}
 
 int Hash_Table::Count_Collisions()
 {
@@ -198,11 +226,17 @@ int main()
 		}
 		cin >> Operation >> Str;
 	}
-	
-	for(Hash_Table::iterator it (Table.myarray, 0); it != Hash_Table::iterator(Table.myarray, 0).end(); it++)
-		cout << *it << endl;
 
-	cout << "Number of collisions: " << Table.Count_Collisions() << endl;
+
+	Hash_Table::iterator it = Table.begin();
+	it++;
+	cout << *it << endl;
+	it++;
+	while (it != Table.end())
+	{
+		cout << *it << endl;
+		it++;
+	}
 
 	fclose(stdin);
 	fclose(stdout);
