@@ -121,12 +121,19 @@ void HeapSortVector(int size){
 	ourHeap.sort();
 	ourHeap.write();
 }
+void HeapSort(int size){
+	Heap ourHeap(size);
+	ourHeap.read();
+	ourHeap.sort();
+	ourHeap.write();
+}
 
 int main( void ){
 	freopen("input.txt","r",stdin);
 	freopen("output.txt","w",stdout);
 	int size;
 	cin >> size;
-	HeapSortVector(size);
+	//HeapSortVector(size);
+	HeapSort(size);
 	return 0;
 }
