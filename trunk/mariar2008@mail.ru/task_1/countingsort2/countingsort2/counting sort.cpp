@@ -40,7 +40,7 @@ void CountingSort(vector<myType>&Student){
 
 }
 
-bool Check(vector<myType>Student){
+bool Check(const vector<myType>&Student){
 	for (int i = 1; i < Student.size(); i++){
 		if (Student[i].Mark < Student[i - 1].Mark){
 			return false;
@@ -49,7 +49,7 @@ bool Check(vector<myType>Student){
 	return true;
 }
 
-void write(vector<myType>&Student){
+void write(const vector<myType>&Student){
 	if (!Check(Student)){
 		cout << "FAIL";
 	}   
