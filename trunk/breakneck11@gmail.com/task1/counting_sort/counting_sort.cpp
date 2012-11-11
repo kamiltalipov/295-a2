@@ -65,5 +65,6 @@ int main()
 	ans = counting_sort(studs);
 	for (int i = 0; i < ans->size(); ++i)
 		cout << ans->at(i) << endl;
+	delete ans;
 	return 0;
 }
