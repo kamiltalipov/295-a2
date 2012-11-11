@@ -1,69 +1,52 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include <algorithm>
 
 using namespace std;
-
-int lower_bound(int x, vector < int > &arr)
-{
-	int l = 0; 
-	int r = arr.size();
-	while (r - l > 1)
-	{
-		int mid = (l + r) / 2;
-		if (arr[mid] < x)
-			l = mid;
-		else
-			r = mid;
-	}
-	return l;
-}
-
 
 int main()
 {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, size, max = 0;
+	int n, size = 0;
 	cin >> n;
-	vector < int > array (n);
-	vector < int > dp(n + 1, (1 << 31 - 1));
-	vector < int > prev (n, 0);
-	int pos;
-	dp[0] = (1 << 32 - 1);;
+
+	vector < int > input (n);
+	vector < int > prev (n);
+	vector < int > dp(n + 1, 1 << 31 - 1);
+	dp[0]= 1 << 31;
+	vector < int > ind_min (n + 1, 0);
+
 	for (int i = 0; i < n; i++)
-		cin >> array[i];
-
-	size = 0;
-	for(int i = 0; i < n; i++)
 	{
-		pos = lower_bound(array[i], dp);
-		if (array[i] < dp[pos + 1])
+		cin >> input[i];
+		int j = int (upper_bound(dp.begin(), dp.end(), input[i]) - dp.begin());
+		if ((dp[j - 1] < input[i]) && (input[i] < dp[j]))
 		{
-			prev[i] = pos + 1;
-			if (pos == size)
-			{
+			if (dp[j] == 1 << 31 - 1)
 				size++;
-				max = i;
-			}
-			dp[pos + 1] = array[i];
+			
+			prev[i] = ind_min[lower_bound(dp.begin(), dp.end(), input[i]) - dp.begin() - 1];
+			ind_min[j] = i;
+			dp[j] = input[i];
 		}
 	}
 
-	array.clear();
-	while (max >= 0)
+	vector < int > ans;
+	ans.push_back(dp[size]);
+	int tmp = prev[ind_min[size]];
+	size--;
+	while (size != 0)
 	{
-		if ((prev[max] == size))
-		{
-			array.push_back(dp[prev[max]]);
-			size--;
-		}
-		max--;
+		ans.push_back(input[tmp]);
+		tmp = prev[tmp];
+		size--;
 	}
 
-	for(int i = array.size() - 1; i >= 0; i--)
-		cout << array[i] << ' ';
+	for (int i = ans.size() - 1; i >= 0; i--)
+		cout << ans[i] << ' ';
 	cout << endl;
 	fclose(stdin);
 	fclose(stdout);
