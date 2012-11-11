@@ -59,23 +59,21 @@ int main()
 				j--;
 	}
 	
-/*	while (j != 0)
-	{
-		if (a[k] == b[j])
-			ans.push_back(a[k]);
-		j--;
-	}
+	if (k != 0)
+		while (k >= 0)
+			{
+			if ((a[k] == b[j]) && (ans.size() <= len))
+				ans.push_back(a[k]);
+			k--;
+		}
 
-	j = 0;
-
-	while (k != 0)
-	{
-		if (a[k] == b[j])
-			ans.push_back(a[k]);
-		k--;
-	}*/
-	if (a[0] == b[0])
-		ans.push_back(a[0]);
+	if (j != 0)
+		while (j >= 0)
+		{
+			if ((a[k] == b[j]) && (ans.size() <= len))
+				ans.push_back(a[k]);
+			j--;
+		}
 
 	for(int i = ans.size() - 1; i >= 0; i--)
 		cout << ans[i] << ' ';
