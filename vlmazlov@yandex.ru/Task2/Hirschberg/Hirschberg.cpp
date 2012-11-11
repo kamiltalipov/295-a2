@@ -53,13 +53,13 @@ int Hirschberg(string& s1, string& s2, vector <operation>& ans, int l1, int r1, 
 	col[1].resize(r1 - l1 + 1);
 	for (int i = 0;i < r1 - l1 + 1;i++) col[0].push_back(i);
 	int mid = (r2 + l2) / 2;
-	for (int i = 0;i < mid;i++) { //Calculating forward
+	for (int i = 0;i < mid - l2;i++) { //Calculating forward
 		col[(i + 1) % 2][0] = i + 1;
 		for (int j = 1;j < col[i % 2].size();j++) {
-			col[(i + 1) % 2][j] = min(min(col[i % 2][j] + 1, col[(i + 1) % 2][j - 1] + 1), col[i % 2][j - 1] + (s1[l1 + j - 1] != s2[i]));
+			col[(i + 1) % 2][j] = min(min(col[i % 2][j] + 1, col[(i + 1) % 2][j - 1] + 1), col[i % 2][j - 1] + (s1[l1 + j - 1] != s2[l2 + i]));
 		}
 	}
-	vector <int> left(col[mid % 2].begin(), col[mid % 2].end()); // result for the left half
+	vector <int> left(col[(mid - l2) % 2].begin(), col[(mid - l2) % 2].end()); // result for the left half
 
 	for (int i = r1 - l1;i >= 0;i--) col[0][i] = r1 - l1 - i;
 	for (int i = 0;i <=  (r2 - l2 - 1) / 2;i++) { //Calculating backwards 
@@ -80,14 +80,15 @@ int Hirschberg(string& s1, string& s2, vector <operation>& ans, int l1, int r1, 
 }
 
 int main() {
-	ifstream input("input1.txt", ifstream::in);
+	ifstream input1("input1.txt", ifstream::in);
 	freopen("output.txt", "w", stdout);
 	string s1, s2;
 	vector <operation> ans;
-	getline(input, s1, '\0');
-	input.close();
-	input.open("input2.txt", ifstream::in);
-	getline(input, s2, '\0');
+	getline(input1, s1, '\0');
+	input1.close();
+	ifstream input2("input2.txt", ifstream::in);
+	getline(input2, s2, '\0');
+	input2.close();
 	cout << Hirschberg(s1, s2, ans, 0, s1.length(), 0, s2.length()) << endl;
 	int inc = 0;
 	for (int i = 0;i < ans.size();i++) {
@@ -100,7 +101,7 @@ int main() {
 			inc++;
 		}
 		if (ans[i].type == 2) {
-			cout << "Substitute " << s1[ans[i].index + inc] << " in " << (ans[i].index + inc) << " with " << ans[i].element << endl;
+			cout << "Substitute " << s1[ans[i].index + inc - 1] << " in " << (ans[i].index + inc) << " with " << ans[i].element << endl;
 		}
 	}
 	return 0;
