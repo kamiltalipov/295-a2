@@ -16,7 +16,7 @@ int main()
 	vector < int > input (n);
 	vector < int > prev (n);
 	vector < int > dp(n + 1, 1 << 31 - 1);
-	dp[0]= 1 << 31;
+	dp[0] = 1 << 31;
 	vector < int > ind_min (n + 1, 0);
 
 	for (int i = 0; i < n; i++)
@@ -28,7 +28,7 @@ int main()
 			if (dp[j] == 1 << 31 - 1)
 				size++;
 			
-			prev[i] = ind_min[lower_bound(dp.begin(), dp.end(), input[i]) - dp.begin() - 1];
+			prev[i] = ind_min[j - 1];
 			ind_min[j] = i;
 			dp[j] = input[i];
 		}
