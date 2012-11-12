@@ -38,10 +38,8 @@ string edit_prescription(const string& string1, const string& string2)
 	int m = string1.length()/2;
 	string left = string1.substr(0,m);
 	string right = string1.substr(m);
-	string string2_reverse(string2);
-	reverse(string2_reverse.begin(),string2_reverse.end());
-	string right_reverse(right);
-	reverse(right_reverse.begin(),right_reverse.end());
+	string string2_reverse(string2.rbegin(),string2.rend());
+	string right_reverse(right.rbegin(),right.rend());
 	vector<int> dist_left = edit_distance_vector(left,string2);
 	vector<int> dist_right = edit_distance_vector(right_reverse,string2_reverse);
 
