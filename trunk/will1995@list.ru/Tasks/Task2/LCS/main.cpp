@@ -45,7 +45,6 @@ int main()
 	int len = 0;
 	while ((k != 0) && (j != 0))
 	{
-
 		if (a[k] == b[j])
 		{
 			ans.push_back(a[k]);
@@ -62,7 +61,6 @@ int main()
 
 	bool changed = false;
 	
-	//if (k != 0)
 		while ((k >= 0) && !changed)
 			{
 			if ((a[k] == b[j]) && (ans.size() <= len))
@@ -74,7 +72,6 @@ int main()
 		}
 
 		k = 0;
-//	if (j != 0)
 		while ((j >= 0) && !changed)
 		{
 			if ((a[k] == b[j]) && (ans.size() <= len))
