@@ -58,20 +58,28 @@ int main()
 			else
 				j--;
 	}
+
+	bool changed = false;
 	
-	if (k != 0)
-		while (k >= 0)
+	//if (k != 0)
+		while ((k >= 0) && !changed)
 			{
 			if ((a[k] == b[j]) && (ans.size() <= len))
+			{
 				ans.push_back(a[k]);
+				changed = true;
+			}
 			k--;
 		}
 
-	if (j != 0)
-		while (j >= 0)
+//	if (j != 0)
+		while ((j >= 0) && !changed)
 		{
 			if ((a[k] == b[j]) && (ans.size() <= len))
+			{
 				ans.push_back(a[k]);
+				changed = true;
+			}
 			j--;
 		}
 
