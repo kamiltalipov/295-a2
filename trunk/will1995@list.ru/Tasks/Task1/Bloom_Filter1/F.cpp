@@ -166,7 +166,7 @@ int main()
 	freopen("output.txt", "w", stdout);
 
 	Hash_Table Table;
-	Bloom_Filter Filter(10000000, 5);
+	Bloom_Filter Filter(1000000, 5);
 	string Str;
 	while (input >> Str)
 	{

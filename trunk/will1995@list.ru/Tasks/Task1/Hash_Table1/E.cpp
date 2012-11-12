@@ -16,15 +16,13 @@ public:
 	bool Str_Exists(string &Str);
 	int Count_Collisions();
 	Hash_Table();
-	vector <list <string> > myarray;
 	iterator end();
 	iterator begin();
-	void next();
 
 	class iterator
 	{
 	public:
-		friend class Hash_Table;
+	//	friend class Hash_Table;
 		Hash_Table *Table;
 		list< string >::iterator elem;
 		vector <list < string > >::iterator single_list;
@@ -92,6 +90,8 @@ private:
 	unsigned long long hs;
 	void check();
 	void realloc (int new_size);
+	vector <list <string> > myarray;
+	void next();
 };
 
 
