@@ -6,11 +6,6 @@
 
 using namespace std;
 
-void lcs(string &a, string &b)
-{
-
-}
-
 int main()
 {
 	freopen("input.txt", "r", stdin);
@@ -53,20 +48,12 @@ int main()
 				j--;
 	}
 	
-	while (j >= 0)
+	if (ans.size() != 1)
 	{
-		if (s[k] == t[j])
-			ans.push_back(s[k]);
-		j--;
-	}
-
-	j = 0;
-
-	while (k >= 0)
-	{
-		if (s[k] == t[j])
-			ans.push_back(s[k]);
-		k--;
+		if (ans[0] != ans[ans.size() - 1])
+			ans.push_back(' ');
+		for (int i = 0; i < (ans.size() - 1) / 2; i++)
+			ans[ans.size() - 1 - i] = ans[i];
 	}
 
 	cout << ans;
