@@ -42,7 +42,7 @@ int main()
 	int j = m - 1;
 	int k = n - 1;
 	int len = 0;
-		while ((k != 0) && (j != 0))
+	while ((k != 0) && (j != 0))
 	{
 
 		if (a[k] == b[j])
@@ -53,7 +53,7 @@ int main()
 			len++;
 		}
 		else
-			if (dp[k][j - 1] < dp[k - 1][j])
+			if (dp[k][j - 1] <= dp[k - 1][j])
 				k--;
 			else
 				j--;
@@ -72,6 +72,7 @@ int main()
 			k--;
 		}
 
+		k = 0;
 //	if (j != 0)
 		while ((j >= 0) && !changed)
 		{
