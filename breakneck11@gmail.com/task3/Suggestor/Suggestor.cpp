@@ -35,7 +35,6 @@ public:
 			return str.length() < hs.str.length();
 		return str[L] < hs.str[L];
 	}
-	bool operator== (const Hstring& hs) const { return str.length() == hs.str.length() && hashes[hashes.size() - 1] == hs.hashes[hs.hashes.size() - 1]; }
 	bool has_pref(const Hstring& hs) { return str.length() >= hs.str.length() && hashes[hs.str.length()] == hs.hashes[hs.str.length()]; }
 };
 
@@ -128,10 +127,12 @@ int Suggestor::get_last_pref_pos(const Hstring &pref, int start_pref)
 void Suggestor::Request(const string& pref, int len, vector < string > &ans)
 {
 	ans.clear();
+	if (!len || !dict.size())
+		return;
 	Hstring hpref(pref);
 	int L = lower_bound(dict.begin(), dict.end(), make_pair(hpref, INT_MIN)) - dict.begin(),
 		R = get_last_pref_pos(hpref, L);
-	if (L == R || !len)
+	if (L == R)
 		return;
 	vector < int > mans;
 	get_sug(0, 0, dict.size(), L, R, mans, len);
