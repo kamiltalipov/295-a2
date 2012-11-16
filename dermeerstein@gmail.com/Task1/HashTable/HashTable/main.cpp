@@ -2,7 +2,6 @@
 #include <vector>
 #include <list>
 #include <string>
-#include <iterator>
 #include <cassert>
 #include <crtdbg.h>
 
@@ -18,7 +17,7 @@ public:
 	bool Find(string& s);
 	int MaxNumberOfCollisions();
 	
-	class iterator:public std::iterator<bidirectional_iterator_tag, vector < list <string> > >
+	class iterator
 	{
 		vector < list <string> >::iterator vector_it;
 		list <string>::iterator list_it;
@@ -39,18 +38,21 @@ public:
 
 		iterator& operator++()
 		{
-			++list_it;
-			for (;list_it != (*vector_it).end(); ++list_it)
+			if (list_it != (*vector_it).end())
+				++list_it;
+			if (list_it == (*vector_it).end())
 			{
-				return *this;
-			}
-			++vector_it;
-			for (;vector_it != (container->table).end(); ++vector_it)
-			{
-				for (list_it = (*vector_it).begin(); list_it != (*vector_it).end(); ++list_it)
+				for (vector_it = vector_it + 1; vector_it != (container->table).end(); vector_it++)
 				{
-					return *this;
+					if ((*vector_it).size() > 0)
+					{
+						list_it = (*vector_it).begin();
+						return *this;
+					}
+
 				}
+				if (vector_it == (container->table).end())
+					list_it = (*(vector_it - 1)).end();
 			}
 			return *this;
 		}
@@ -59,29 +61,20 @@ public:
 		{
 			if (vector_it == (container->table).end() || list_it == (*vector_it).begin())
 			{
-				--vector_it;
-				for (;vector_it != (container->table).begin(); --vector_it)
+				for (vector_it = vector_it - 1; vector_it != (container->table).begin(); vector_it--)
 				{
 					if ((*vector_it).size() > 0)
-					{
-						for (list_it = --(*vector_it).end(); list_it != (*vector_it).begin(); --list_it)
-						{
-							return *this;
-						}
-						return *this;
-					}
+						break;
 				}
 				if ((*vector_it).size() > 0)
-				{
-					for (list_it = --(*vector_it).end(); list_it != (*vector_it).begin(); --list_it)
-					{
-						return *this;
-					}
-					return *this;
-				}
+					list_it = --(*vector_it).end();
+				else
+					list_it = (*vector_it).begin();
 			}
 			else
 				--list_it;
+
+			return *this;
 		}
 
 		bool operator!=(iterator other_it)
@@ -115,7 +108,6 @@ private:
 	int size;
 	int number_of_elements;
 	vector < list <string> > table;
-	vector < list <string> > copy_table;
 };
 
 HashTable::HashTable()
@@ -162,14 +154,14 @@ void HashTable::realloc(int new_size)
 {	
 	while (!is_prime(new_size))
 		++new_size;
+	vector < list <string> > copy_table;
 	copy_table.resize(new_size);
 	size = new_size;
 	for (HashTable::iterator it = begin(); it != end(); it++)
 	{
 		copy_table[hash(*it) % size].push_back(*it);
 	}
-	table =	copy_table;
-	copy_table.clear();
+	swap(table, copy_table);
 }
 
 void HashTable::Add(string& s)
@@ -240,11 +232,11 @@ int main()
 		{
 			cout << (*it) << endl;
 		}
-		/*for (HashTable::iterator it = --Table->end(); it != Table->begin(); it--)
+		for (HashTable::iterator it = --Table->end(); it != Table->begin(); it--)
 		{
 			cout << (*it) << endl;
 		}
-		cout << (*Table->begin());*/
+		cout << (*Table->begin());
 
 		cout << Table->MaxNumberOfCollisions();
 		delete Table;
