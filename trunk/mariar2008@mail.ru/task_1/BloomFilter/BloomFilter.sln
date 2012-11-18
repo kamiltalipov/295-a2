@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BloomFilter", "BloomFilter\BloomFilter.vcxproj", "{9AAE7120-F5E5-45FF-9733-00CFECF0D702}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AAE7120-F5E5-45FF-9733-00CFECF0D702}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9AAE7120-F5E5-45FF-9733-00CFECF0D702}.Debug|Win32.Build.0 = Debug|Win32
+		{9AAE7120-F5E5-45FF-9733-00CFECF0D702}.Release|Win32.ActiveCfg = Release|Win32
+		{9AAE7120-F5E5-45FF-9733-00CFECF0D702}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
