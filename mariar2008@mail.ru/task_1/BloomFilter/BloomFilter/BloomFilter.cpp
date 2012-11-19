@@ -208,11 +208,11 @@ void HashTable::Delete(string& s){
 class BloomFilter{
 public:
 	BloomFilter();
-	void Add(string& s);
-	bool Find(string& s);
+	void add(string& s);
+	bool find(string& s);
 private:
-	static const int size = 4000000;
-	static const int NumHash = 7;
+	static const int size = 4804692; //4804692; //size = -(501269*ln(0.01))/(ln2)^2
+	static const int NumHash = 7;//NumHash = (size*ln2)/501269;
 	unsigned int DoHash(int p, string& s);
 	void DoModule();
 	int NextPrime(int x);
@@ -224,12 +224,13 @@ private:
 BloomFilter::BloomFilter(){
 	ourArr.resize(size);
 	module.resize(NumHash);
+	DoModule();
 }
 
 bool BloomFilter::isPrime(int x){
 	for (int i = 2; i*i <= x; i++)
-		if (x % i == 0) return true;
-	return false;
+		if (x % i == 0) return false;
+	return true;
 }
 
 int BloomFilter::NextPrime(int x){
@@ -241,25 +242,24 @@ int BloomFilter::NextPrime(int x){
 void BloomFilter::DoModule(){
 	srand(time(NULL));
 	module[0] = NextPrime(rand());
-	for (int i = 1; i < NumHash; i++){
-		module[i] = NextPrime(module[i - 1]);
-	}
+	for (int i = 1; i < NumHash; i++)
+		module[i] = NextPrime(module[i - 1] + 1);
 }
 
 unsigned int BloomFilter::DoHash(int p, string& s){
 	unsigned int h = 0;
 	for (int i = 0; i < s.size(); i++)
 		h = h*p + s[i];
-	return h;
+	return h%size;
 }
 
-void BloomFilter::Add(string& s){
+void BloomFilter::add(string& s){
 	for (int i = 0; i < NumHash; i++){
 		unsigned int h = DoHash(module[i], s);
 		ourArr[h] = 1;
 	}
 }
-bool BloomFilter::Find(string& s){
+bool BloomFilter::find(string& s){
 	for (int i = 0; i < NumHash; i++){
 		unsigned int h = DoHash(module[i], s);
 		if (!ourArr[h])
@@ -279,7 +279,7 @@ int main(void){
 	freopen("output.txt","w",stdout);
 	ifstream inOne ("LordOfTheRings.txt");
 	HashTable DictionaryHT;
-	HashTable DictionaryBF;
+	BloomFilter DictionaryBF;
 	string s;
 	int cur = 0;
 	while (!inOne.eof()){
@@ -293,14 +293,14 @@ int main(void){
 				for (int k = i; k <= j; k++)
 					s[k] = tolower(s[k]);
 				DictionaryHT.Add(s.substr(i, j - i + 1));
-			    DictionaryBF.Add(s.substr(i, j - i + 1));
+			    DictionaryBF.add(s.substr(i, j - i + 1));
 				cur++;
 			}
 		}
 	}
 	cout << "Количество слов в словаре " << cur << endl;  
 	inOne.close();
-	ifstream inTwo ("Dickens.txt");
+	ifstream inTwo ("ThreeMenInABoat.txt");
 	int BFfalse = 0, find = 0, unic = 0;;
 	double MediumTimeHT = 0, MediumTimeBF = 0;
 	while (!inTwo.eof()){
@@ -318,13 +318,14 @@ int main(void){
 				timeHT = clock() - timeHT;
 				MediumTimeHT += timeHT;
 				double timeBF = clock();
-				bool BFfind = DictionaryBF.Find(s.substr(i, j - i + 1));
+				bool BFfind = DictionaryBF.find(s.substr(i, j - i + 1));
 				timeBF = clock() - timeBF;
 				MediumTimeBF += timeBF;
 				if (HTfind) find++;
 				else unic++;
 				
-				if (!HTfind && BFfind) BFfalse++;
+				//if (!HTfind && BFfind)	BFfalse++;
+				if (HTfind != BFfind) BFfalse++;
 			}
 		}
 	}
