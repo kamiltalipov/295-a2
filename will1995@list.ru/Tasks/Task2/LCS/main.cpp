@@ -26,64 +26,48 @@ int main()
 	for(int i = 0; i < m; i++)
 		cin >> b[i];
 
-	vector < vector < int > > dp(n + 1, vector <int> (m + 1));
 
+	vector <int> dp (max (n, m) + 1);
+	vector <int> prev (max (n, m) + 1);
 
-
-	for (int i = 1; i <= n; i++)
-		for (int j = 1; j <= m; j++)
+	int current = 0;
+	int last = -1;
+	int length = 0;
+	int indmax = 0;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
 		{
-			if (a[i - 1] == b[j - 1])
-				dp[i][j] = dp[i - 1][j - 1] + 1;
+			if ((a[i] == b[j]) && ((current + 1) > dp[j]))
+			{
+				dp[j] = current + 1;
+				if (dp[j] > length)
+				{
+					length = dp[j];
+					indmax = j;
+				}
+				prev[j] = last;
+			}
 			else
-				dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+				if ((a[i] > b[j]) && (current < dp[j]))
+				{
+					current = dp[j];
+					last = j;
+				}
 		}
 
-	vector < int > ans;
-	int j = m - 1;
-	int k = n - 1;
-	int len = 0;
-	while ((k != 0) && (j != 0))
+
+	vector <int> ans;
+	ans.push_back(b[indmax]);
+	length--;
+	while (length != 0)
 	{
-		if (a[k] == b[j])
-		{
-			ans.push_back(a[k]);
-			k--;
-			j--;
-			len++;
-		}
-		else
-			if (dp[k][j - 1] <= dp[k - 1][j])
-				k--;
-			else
-				j--;
+		indmax = prev[indmax];
+		ans.push_back(b[indmax]);
+		length--;
 	}
 
-	bool changed = false;
-	
-		while ((k >= 0) && !changed)
-			{
-			if ((a[k] == b[j]) && (ans.size() <= len))
-			{
-				ans.push_back(a[k]);
-				changed = true;
-			}
-			k--;
-		}
-
-		k = 0;
-		while ((j >= 0) && !changed)
-		{
-			if ((a[k] == b[j]) && (ans.size() <= len))
-			{
-				ans.push_back(a[k]);
-				changed = true;
-			}
-			j--;
-		}
-
-	for(int i = ans.size() - 1; i >= 0; i--)
-		cout << ans[i] << ' ';
+	for (int i = ans.size() - 1; i >= 0; i--)
+		cout << a[i] << ' ';
 	cout << endl;
 	fclose(stdin);
 	fclose(stdout);
