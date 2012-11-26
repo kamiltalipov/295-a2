@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2469B571-020A-4C3C-84BC-1CB7640F53A6}</ProjectGuid>
+    <ProjectGuid>{12032AE4-A2DD-4DBF-8B22-089162FB93D3}</ProjectGuid>
     <RootNamespace>LCIS</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

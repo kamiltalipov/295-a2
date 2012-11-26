@@ -1,75 +1,89 @@
-#include <stdio.h>
 #include<iostream>
+#include<stdio.h>
 #include<vector>
-
+#include<algorithm>
+ 
 using namespace std;
-void MakeLCIS(const vector<int>& ArrOne, const vector<int>& ArrTwo, const int Min){
-	int n = ArrOne.size(), m = ArrTwo.size();
-	vector<vector<int>> MaxCurLCIS(n, m), link(n, m), MinLastEl(n, m);
 
-	for (int i = 0; i < n; i++) 
-		for (int j = 0; j < m; j++)
-			MinLastEl[i][j] = Min - 1;
+int find(const vector<vector<int>>&MaxLine, const vector<int>& a, int var, int x, int y, int& k){
+	k = -1;
+	if (y == -1)
+		return 0;
+	int result = 0;
 	
-	for (int i = 1; i < n; i++){
-		for (int j = 1; j < m; j++){
-			if ((MaxCurLCIS[i][j - 1] > MaxCurLCIS[i - 1][j])||((MaxCurLCIS[i][j - 1] == MaxCurLCIS[i - 1][j])&&(MinLastEl[i][j - 1] < MinLastEl[i - 1][j]))){
-				MaxCurLCIS[i][j] = MaxCurLCIS[i][j - 1];
-				link[i][j] = -1;
-				MinLastEl[i][j] = MinLastEl[i][j - 1];
-			}
-			else{
-				MaxCurLCIS[i][j] = MaxCurLCIS[i - 1][j];
-				link[i][j] = 1;
-				MinLastEl[i][j] = MinLastEl[i - 1][j];
-			}
-			if ((ArrOne[i] == ArrTwo[j])&&(ArrOne[i] > MinLastEl[i - 1][j - 1])){
-				if ((MaxCurLCIS[i - 1][j - 1] + 1 > MaxCurLCIS[i][j])||((MaxCurLCIS[i - 1][j - 1] + 1 == MaxCurLCIS[i][j])&&(MinLastEl[i][j] > ArrOne[i]))){
-					MaxCurLCIS[i][j] = MaxCurLCIS[i - 1][j - 1]  + 1;
-					link[i][j] = 0;
-					MinLastEl[i][j] = ArrOne[i];
-				}
-			}
+	for (int i = 0; i < x; i++){
+		if (a[i] <= var && result < MaxLine[i][y]){
+			result = MaxLine[i][y];
+			k = i;
 		}
 	}
-	int LenAns = MaxCurLCIS[n - 1][m - 1];
-	cout << LenAns << endl;
-	int x = n - 1, y = m - 1;
-	vector<int> Ans;
-	while ((x != 0)&&(y != 0)){
-		if (link[x][y] == -1)
-			y--;
-		else
-			if (link[x][y] == 1)
-				x--;
-			else{
-				Ans.push_back(ArrOne[x]);
-				x--;
-				y--;
-			}
-	}
-	for (int i = LenAns - 1; i >= 0; i--)
-		 cout << Ans[i] << " ";
+	return result;
 }
- int main( void ){
-	 freopen("input.txt","r",stdin);
-	 freopen("output.txt","w",stdout);
-	 int LenOne, LenTwo, Min;
-	 cin >> LenOne;
-	 vector<int>ArrOne(LenOne + 1);
-	 cin >> ArrOne[1];
-	 Min = ArrOne[1];
-	 for (int i = 2; i <= LenOne; i++){
-		 cin >> ArrOne[i];
-		 Min = min(Min, ArrOne[i]);
-	 }
-	 cin >> LenTwo;
-	 vector<int>ArrTwo(LenTwo + 1);
-	 for (int i = 1; i <= LenTwo; i++){
-		 cin >> ArrTwo[i];
-		 Min = min(Min, ArrTwo[i]);
-	 }
 
-	 MakeLCIS(ArrOne, ArrTwo, Min);
-	 return 0;
- }
+void MakeLCIS(const vector<int>& a, const vector<int>& b, int n, int m){
+	vector<vector<int>>MaxLen(n, m), MaxLine(n, m), Par(n, m), MinNumLen(n + 1, m);
+	for (int i = 0; i < n; i++){
+		for (int j = 0; j < m; j++){
+			int k = 0;
+			if (a[i] == b[j])
+				MaxLen[i][j] = 1 + find(MaxLine, a, a[i], i, j - 1, k);
+			Par[i][j] = k;
+			MaxLine[i][j] = MaxLen[i][j];
+			if (j > 0 && MaxLine[i][j] < MaxLine[i][j - 1]){
+				MaxLine[i][j] = MaxLine[i][j - 1]; 
+				Par[i][j] = Par[i][j - 1];
+			}
+			/*if (a[MinNumLen[MaxLine[i][j]][j]] > a[i])
+				MinNumLen[MaxLine[i][j]][j] = i;*/
+		}
+	}
+	int result = 0, j = 0;
+	for (int i = 0; i < n; i++){
+		if (result < MaxLine[i][m - 1]){
+			result = MaxLine[i][m - 1];
+			j = i;
+		}
+	}
+	cout << result << endl;
+	vector<int>ans;
+	int i = m - 1;
+	while (j != -1){
+		ans.push_back(a[j]);
+		j = Par[j][i];
+		i--;
+	}
+	for (int i = ans.size() - 1; i >= 0; i--)
+		cout << ans[i] << " ";
+}
+
+int main( void ){
+	freopen("input.txt","r",stdin);
+	freopen("output.txt","w",stdout);
+
+	int n, m;
+	cin >> n;
+	vector<int>a(n);                                                     
+	for (int i = 0; i < n; i++)
+		cin >> a[i];
+	cin >> m;
+	vector<int>b(m);
+	for (int i = 0; i < n; i++)
+		cin >> b[i];
+	int j = 1;
+	for (int i = 1; i < n; i++)
+		if (a[i] != a[i - 1]){
+			a[j] = a[i];
+			j++;
+		}
+	n = j;
+	j = 1;
+	for (int i = 1; i < n; i++)
+		if (b[i] != b[i - 1]){
+			b[j] = b[i];
+			j++;
+		}
+	m = j;
+
+	MakeLCIS(a, b, n, m);
+	return 0;
+}
