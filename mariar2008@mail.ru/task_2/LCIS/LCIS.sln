@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LCIS", "LCIS\LCIS.vcxproj", "{2469B571-020A-4C3C-84BC-1CB7640F53A6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LCIS", "LCIS\LCIS.vcxproj", "{12032AE4-A2DD-4DBF-8B22-089162FB93D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2469B571-020A-4C3C-84BC-1CB7640F53A6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2469B571-020A-4C3C-84BC-1CB7640F53A6}.Debug|Win32.Build.0 = Debug|Win32
-		{2469B571-020A-4C3C-84BC-1CB7640F53A6}.Release|Win32.ActiveCfg = Release|Win32
-		{2469B571-020A-4C3C-84BC-1CB7640F53A6}.Release|Win32.Build.0 = Release|Win32
+		{12032AE4-A2DD-4DBF-8B22-089162FB93D3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{12032AE4-A2DD-4DBF-8B22-089162FB93D3}.Debug|Win32.Build.0 = Debug|Win32
+		{12032AE4-A2DD-4DBF-8B22-089162FB93D3}.Release|Win32.ActiveCfg = Release|Win32
+		{12032AE4-A2DD-4DBF-8B22-089162FB93D3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
