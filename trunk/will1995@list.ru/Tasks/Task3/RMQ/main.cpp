@@ -16,14 +16,28 @@ class RMQ
 private:
 	void build( int len );
 	void push ( int v );
-	int min ( int l, int r, int lb, int rb, int v );
+	int Min ( int l, int r, int lb, int rb, int v );
 	vector <elem> data;
 
 public:
 	int size;
 	RMQ( vector <int> &buff );
 	int Get_Min ( int l, int r, int lb, int rb, int v );
+	void Update ( int l, int r, int lb, int rb, int v, int x );
+	void Print();
 };
+
+void RMQ::Print()
+{
+	for (int i = 1; i < size / 2; i++)
+	{
+		push(i);
+	}
+
+	for (int i = size / 2; i < size; i++)
+		cout << data[i].min + data[i].add << " ";
+	cout << endl;
+}
 
 void RMQ::push( int v )
 {
@@ -31,6 +45,24 @@ void RMQ::push( int v )
 	data[v * 2 + 1].add += data[v].add;
 	data[v].min += data[v].add;
 	data[v].add = 0;
+}
+
+void RMQ::Update ( int l, int r, int lb, int rb, int v, int x )
+{
+	if (lb != rb)
+		push(v);
+	if ((l > rb) || (r < lb))
+		return;
+	else
+		if ((lb >= l) && (rb <= r))
+			data[v].add += x;
+		else
+			{
+				int mid = (lb + rb) / 2;
+				Update (l, r, lb, mid, v * 2, x);
+				Update (l, r, mid + 1, rb, v * 2 + 1, x);
+				data[v].min = min((data[v * 2].add + data[v * 2].min), (data[v * 2 + 1].min + data[v * 2 + 1].add));
+			}
 }
 
 void RMQ::build( int len )
@@ -45,19 +77,19 @@ void RMQ::build( int len )
 	data[0].min = INT_MAX;
 }
 
-int RMQ::min (int l, int r, int lb, int rb, int v)
+int RMQ::Min (int l, int r, int lb, int rb, int v)
 {
 	if ((l > rb) || (r < lb))
 		return 0;
 
-	if ((l >= lb) && (r <= rb))
+	if ((lb >= l) && (rb <= r))
 		return v;
 
 	push(v);
 	
-	int mid = (l + r) / 2;
-	int a = min (l, mid, lb, rb, v * 2);
-	int b = min (mid + 1, r, lb, rb, v * 2 + 1);
+	int mid = (lb + rb) / 2;
+	int a = Min (l, r, lb, mid, v * 2);
+	int b = Min (l, r, mid + 1, rb, v * 2 + 1);
 	if (data[a].min < data[b].min)
 		return a;
 	else
@@ -66,7 +98,7 @@ int RMQ::min (int l, int r, int lb, int rb, int v)
 
 int RMQ::Get_Min( int l, int r, int lb, int rb, int v )
 {
-	int ans = data[min( l, r, lb, rb, v )].min;
+	int ans = data[Min( l, r, lb, rb, v )].min;
 	return ans;
 }
 
@@ -80,7 +112,7 @@ RMQ::RMQ( vector <int> &buff )
 		data[i + len].min = buff[i];
 
 	for (int i = buff.size(); i < len; i++)
-		data[i + len].min = -INT_MAX;
+		data[i + len].min = INT_MAX;
 
 	build( len );
 	size = len * 2;
@@ -101,7 +133,23 @@ int main()
 	}
 	RMQ Tree(input);
 
-	cout << Tree.Get_Min(1, Tree.size / 2, 1, 2, 1);
+	int operation;
+	while (cin >> operation)
+	{
+		if (operation == 1)
+		{
+			int l, r;
+			cin >> l >> r;
+			cout << Tree.Get_Min(l, r, 1, Tree.size / 2, 1) << endl;
+		}
+		else
+		{
+			int l, r, x;
+			cin >> l >> r >> x;
+			Tree.Update(l, r, 1, Tree.size / 2, 1, x);
+			Tree.Print();
+		}
+	}
 	fclose(stdin);
 	fclose(stdout);
 	return 0;
