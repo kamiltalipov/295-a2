@@ -10,6 +10,7 @@
 #include<queue>
 #include<algorithm>
 #include<vector>
+#include<limits>
 
 using namespace std;
 struct my{
@@ -352,6 +353,7 @@ void processing(string& s, vector<my>& arr, IntervalTree& RMQ, int k){
 		values.push_back(x);
 		RMQ.Replace(middle + 1, numeric_limits<int>::min());
 	}
+	cout << endl;
 	Back(values, RMQ);
 
 }
