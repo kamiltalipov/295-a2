@@ -13,10 +13,9 @@ public:
 	void Change ( int x, int val );
 	Tree();
 	Tree( int n );
-	vector <int> data;
 
 private:
-
+	vector <int> data;
 };
 
 
@@ -50,24 +49,18 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, m;
-	cin >> n >> m;
+	int n, ans = 0;
+	cin >> n;
 	vector <int> input (n);
 	Tree Ftree(n + 1);
 	for (int i = 0; i < n; i++)
 	{
 		cin >> input[i];
-		Ftree.Change(i, input[i]);
+		Ftree.Change(input[i] - 1, 1);
+		ans += Ftree.Sum(n - 1) - Ftree.Sum(input[i] - 1);
 	}
 
-
-	while (m != 0)
-	{
-		int l, r;
-		cin >> l >> r;
-		cout << Ftree.Sum(r - 1) - Ftree.Sum(l - 2) << endl;
-		m--;
-	}
+	cout << ans << endl;
 
 	fclose(stdin);
 	fclose(stdout);
