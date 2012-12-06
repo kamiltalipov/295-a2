@@ -57,7 +57,7 @@ int RMQ::min (int l, int r, int lb, int rb, int v)
 	
 	int mid = (l + r) / 2;
 	int a = min (l, mid, lb, rb, v * 2);
-	int b = min (mid + 1, r, lb, rb, v * 2);
+	int b = min (mid + 1, r, lb, rb, v * 2 + 1);
 	if (data[a].min < data[b].min)
 		return a;
 	else
@@ -66,7 +66,7 @@ int RMQ::min (int l, int r, int lb, int rb, int v)
 
 int RMQ::Get_Min( int l, int r, int lb, int rb, int v )
 {
-	int ans = data[min ( l, r, lb, rb, v )].min;
+	int ans = data[min( l, r, lb, rb, v )].min;
 	return ans;
 }
 
@@ -80,7 +80,7 @@ RMQ::RMQ( vector <int> &buff )
 		data[i + len].min = buff[i];
 
 	for (int i = buff.size(); i < len; i++)
-		data[i + len].min = INT_MAX;
+		data[i + len].min = -INT_MAX;
 
 	build( len );
 	size = len * 2;
@@ -100,7 +100,6 @@ int main()
 		cin >> input[i];	
 	}
 	RMQ Tree(input);
-
 
 	cout << Tree.Get_Min(1, Tree.size / 2, 1, 2, 1);
 	fclose(stdin);
