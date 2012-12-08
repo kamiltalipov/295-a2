@@ -10,7 +10,6 @@ class Treap
 public:
 	struct Node;
 	typedef unsigned int unint;
-	//typedef Node* Node*;
 	struct Node
 	{
 		unint key, size;
@@ -128,6 +127,35 @@ Treap::Node* Treap::Find( int x, Node* t )
 	return t;
 }
 
+Treap::Node* Treap::Next( int x )
+{
+	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
+	tmp = Find( x, root );
+	if (tmp)
+	{
+		if (tmp->r)
+		{
+			tmp = tmp->r;
+			while (tmp->l)
+				tmp = tmp->l;
+		}
+		else
+		{
+			while (tmp->par && (tmp->par->l != tmp))
+				tmp = tmp->par;
+			if (tmp->par)
+				tmp = tmp->par;
+			else
+				return NULL;
+				//if ((!tmp->par->l) || (tmp->par->l != tmp))
+					//return NULL;
+		}
+	}
+	else
+		return NULL;
+	return tmp;
+}
+
 void Treap::Add( int x )
 {
 	if (!root)
@@ -140,13 +168,6 @@ void Treap::Add( int x )
 	unint nk = rand() << 15 + rand();
 
 	Node* tmp = Find(x, root);
-/*	if (tmp && (tmp->data != x))
-	{
-		if (nk > tmp->key)
-		{
-
-		}
-	}*/
 
 	if (!tmp)
 	{
@@ -188,6 +209,13 @@ int main()
 		tr.Add(x);
 	}
 
+
+	Treap::Node* nx = new Treap::Node(0, 0, NULL, NULL, NULL);
+	nx = tr.Next(3);
+	if (nx)
+		cout << nx->data << endl;
+	else
+		cout << "-1" << endl;
 	fclose(stdin);
 	fclose(stdout);
 	return 0;
