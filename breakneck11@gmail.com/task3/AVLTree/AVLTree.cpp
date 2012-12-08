@@ -18,6 +18,8 @@ protected:
 	BSTNode(const double& val, BSTNode* L = NULL, BSTNode* R = NULL, BSTNode* parent = NULL) :
 		val(val), L(L), R(R), parent(parent) {}
 	virtual ~BSTNode() { delete L; delete R; }
+	static BSTNode* Next(BSTNode* p);
+	static BSTNode* Previous(BSTNode* p);
 };
 
 class AVLTree
@@ -112,8 +114,7 @@ AVLTree::pnode AVLTree::AVLNode::add(AVLTree::pnode p, const double& val)
 		p->L = add(cast(p->L), val);
 	else
 		p->R = add(cast(p->R), val);
-	balance(p);
-	return p;
+	return balance(p);
 }
 
 AVLTree::pnode AVLTree::AVLNode::remove(AVLTree::pnode p, const double& val)
@@ -154,18 +155,46 @@ bool AVLTree::AVLNode::contain(AVLTree::pnode p, const double& val)
 	return true;
 }
 
+BSTNode* BSTNode::Next(BSTNode* p)
+{
+	if (!p)
+		return NULL;
+	if (p->R)
+	{
+		p = p->R;
+		while (p->L)
+			p = p->L;
+		return p;
+	}
+	BSTNode *q = p;
+	while (p->parent && p->L != q)
+		q = p, p = p->parent;
+	return p->L == q ? p : NULL;
+}
+
+BSTNode* BSTNode::Previous(BSTNode* p)
+{
+	if (!p)
+		return NULL;
+	if (p->L)
+	{
+		p = p->L;
+		while (p->R)
+			p = p->R;
+		return p;
+	}
+	BSTNode *q = p;
+	while (p->parent && p->R != q)
+		q = p, p = p->parent;
+	return p->R == q ? p : NULL;
+}
+
 int main()
 {
 	AVLTree t(.0);
-	t.Add(1.);
-	t.Add(-1.);
-	cout << t.Contain(-1) << " " << t.Contain(0) << " " << t.Contain(1) << endl;
-	t.Remove(1);
-	cout << t.Contain(-1) << " " << t.Contain(0) << " " << t.Contain(1) << endl;
-	t.Remove(0);
-	cout << t.Contain(-1) << " " << t.Contain(0) << " " << t.Contain(1) << endl;
-	t.Add(1);
-	cout << t.Contain(-1) << " " << t.Contain(0) << " " << t.Contain(1) << endl;
+	for (int i = 0; i < 10; ++i)
+		t.Add(i);
+	t.Contain(0);
 	system("pause");
 	return 0;
 }
