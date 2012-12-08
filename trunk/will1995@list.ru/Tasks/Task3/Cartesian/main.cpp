@@ -1,8 +1,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <ctime>
-#include <fstream>
 #include <vector>
+
+using namespace std;
 
 class Treap
 {
@@ -85,8 +86,8 @@ void Treap::split ( int x, Node* t, Node* &l, Node* &r )
 		split( x, t->r, t->r, r );
 		l = t;
 	}
-	if (l) { l->update (); };
-	if (r) { r->update (); };
+	if (l) { l->par = NULL, l->update (); };
+	if (r) { r->par = NULL, r->update (); };
 }
 
 Treap::Node* Treap::merge (Node* l, Node* r)
@@ -134,15 +135,6 @@ void Treap::Add( int x )
 
 	unint nk = rand() << 15 + rand();
 
-	if (nk >= root->key)
-	{
-		Node* tmp = new Node(x, nk, NULL, NULL, NULL);
-		split(x, root, tmp->l, tmp->r);
-		tmp->update();
-		root = tmp;
-		return;
-	}
-
 	Node* tmp = Find(x, root);
 /*	if (tmp && (tmp->data != x))
 	{
@@ -152,7 +144,7 @@ void Treap::Add( int x )
 		}
 	}*/
 
-	if (tmp && (tmp->data != x))
+	if (!tmp)
 	{
 		Node* l = new Node(0, 0, NULL, NULL, NULL);
 		Node* r = new Node(0, 0, NULL, NULL, NULL);
@@ -174,10 +166,15 @@ int main()
 {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
-
-	Treap x( 3 );
-
-	x.Add( 7 );
+	int n, x;
+	cin >> n;
+	cin >> x;
+	Treap tr(x);
+	for(int i = 1; i < n; i++)
+	{
+		cin >> x;
+		tr.Add(x);
+	}
 
 	fclose(stdin);
 	fclose(stdout);
