@@ -24,16 +24,20 @@ public:
 
 		void update()
 		{
-			if (l) 
+			if (this)
 			{
-				l->par = this;
-				size += l->size;
-			};
-			if (r) 
-			{
-				r->par = this;
-				size += r->size;
-			};
+				this->size = 1;
+				if (l) 
+				{
+					l->par = this;
+					size += l->size;
+				};
+				if (r) 
+				{
+					r->par = this;
+					size += r->size;
+				};
+			}
 		}
 
 		Node (int x, int y, Node* l, Node* r,  Node* par): data(x), key(y), l(l), r(r), par(par) 
@@ -76,7 +80,7 @@ void Treap::split ( int x, Node* t, Node* &l, Node* &r )
 		return;
 	}
 
-	if (x < t->data)
+	if (x <= t->data)
 	{
 		split( x, t->l, l, t->l );
 		r = t;
@@ -151,14 +155,22 @@ void Treap::Add( int x )
 		Node* nw = new Node(0, 0, NULL, NULL, NULL);
 
 		split(x, root, l, r);
+		root->update();
+		l->update();
+		r->update();
+
 		split(x + 1, r, nw, r);
+		r->update();
+		nw->update();
+
 		if (!nw)
 		{
-			nw->data = x;
-			nw->key = nk;
+			nw = new Node(x, nk, NULL, NULL, NULL);
 		}
 		nw = merge(l, nw);
+		nw->update();
 		root = merge(nw, r);
+		root->update();
 	}
 }
 
