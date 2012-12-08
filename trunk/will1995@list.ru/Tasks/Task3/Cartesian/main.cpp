@@ -59,7 +59,7 @@ public:
 
 	ptrnode merge( ptrnode l, ptrnode r );
 
-	ptrnode Find( int x );
+	ptrnode Find( int x, ptrnode t );
 	ptrnode Next( int x );
 	ptrnode Prev( int x );
 
@@ -91,15 +91,49 @@ void Treap::split ( int x, ptrnode t, ptrnode &l, ptrnode &r )
 
 Treap::ptrnode Treap::merge (ptrnode l, ptrnode r)
 {
-    if (l == NULL) return r;
-    if (r == NULL) return l;
-    if (l->key > r->key) {
-       l->r = merge(l->r, r);
-       return l;
-    } else {
-       r->l = merge(l, r->l);
-       return r;
+    if (l == NULL) 
+		return r;
+
+    if (r == NULL) 
+		return l;
+
+    if (l->key > r->key) 
+	{
+		l->r = merge(l->r, r);
+		return l;
+    } 
+	else 
+	{
+		r->l = merge(l, r->l);
+		return r;
     }
+}
+
+Treap::ptrnode Treap::Find( int x, ptrnode t )
+{
+	if (t == NULL) 
+		return NULL;
+
+	if (x < t->data)
+		return Find(x, t->l);
+
+	if (x > t->data)
+		return Find(x, t->r);
+
+	return t;
+}
+
+void Treap::Add( int x )
+{
+	if (!root)
+	{
+		root = new Node( x, rand() << 15 + rand(), NULL, NULL, NULL );
+		root->update();
+		exit;
+	}
+
+
+
 }
 
 int main()
