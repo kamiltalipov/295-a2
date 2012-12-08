@@ -72,7 +72,7 @@ void Treap::split ( int x, Node* t, Node* &l, Node* &r )
 	{
 		l = NULL;
 		r = NULL;
-		exit;
+		return;
 	}
 
 	if (x < t->data)
@@ -144,12 +144,29 @@ void Treap::Add( int x )
 	}
 
 	Node* tmp = Find(x, root);
-	if (tmp)
+/*	if (tmp && (tmp->data != x))
 	{
 		if (nk > tmp->key)
 		{
 
 		}
+	}*/
+
+	if (tmp && (tmp->data != x))
+	{
+		Node* l = new Node(0, 0, NULL, NULL, NULL);
+		Node* r = new Node(0, 0, NULL, NULL, NULL);
+		Node* nw = new Node(0, 0, NULL, NULL, NULL);
+
+		split(x, root, l, r);
+		split(x + 1, r, nw, r);
+		if (!nw)
+		{
+			nw->data = x;
+			nw->key = nk;
+		}
+		nw = merge(l, nw);
+		root = merge(nw, r);
 	}
 }
 
@@ -159,6 +176,8 @@ int main()
 	freopen("output.txt", "w", stdout);
 
 	Treap x( 3 );
+
+	x.Add( 7 );
 
 	fclose(stdin);
 	fclose(stdout);
