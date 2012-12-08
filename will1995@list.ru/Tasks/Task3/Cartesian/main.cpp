@@ -9,14 +9,14 @@ class Treap
 public:
 	struct Node;
 	typedef unsigned int unint;
-	typedef Node* ptrnode;
+	//typedef Node* Node*;
 	struct Node
 	{
 		unint key, size;
 		int data;
 		Node *l, *r, *par;
 
-		bool operator == (ptrnode a)
+		bool operator == (Node* a)
 		{
 			return (this->data == a->data) && (this->key == a->key); //I hope they wouldn't have the same keys...
 		}
@@ -35,7 +35,7 @@ public:
 			};
 		}
 
-		Node (int x, int y, ptrnode l, ptrnode r,  ptrnode par): data(x), key(y), l(l), r(r), par(par) 
+		Node (int x, int y, Node* l, Node* r,  Node* par): data(x), key(y), l(l), r(r), par(par) 
 		{
 			size = 1;
 			update();
@@ -47,26 +47,26 @@ public:
 			delete (r); 
 		};
 	};
-	ptrnode root;
+	Node* root;
 
 	Treap( int x ): root (new Node(x, (rand() << 15 + rand()), NULL, NULL, NULL)) {};
 
 	void Add( int x );
 	void Remove( int x );
-	void split( int x, ptrnode nw, ptrnode &l, ptrnode &r );
+	void split( int x, Node* nw, Node* &l, Node* &r );
 
 	int kth ( int k );
 
-	ptrnode merge( ptrnode l, ptrnode r );
+	Node* merge( Node* l, Node* r );
 
-	ptrnode Find( int x, ptrnode t );
-	ptrnode Next( int x );
-	ptrnode Prev( int x );
+	Node* Find( int x, Node* t );
+	Node* Next( int x );
+	Node* Prev( int x );
 
 	unint size( Treap &t ) { return t.root->size ;};
 };
 
-void Treap::split ( int x, ptrnode t, ptrnode &l, ptrnode &r )
+void Treap::split ( int x, Node* t, Node* &l, Node* &r )
 {
 	if (!t)
 	{
@@ -89,7 +89,7 @@ void Treap::split ( int x, ptrnode t, ptrnode &l, ptrnode &r )
 	if (r) { r->update (); };
 }
 
-Treap::ptrnode Treap::merge (ptrnode l, ptrnode r)
+Treap::Node* Treap::merge (Node* l, Node* r)
 {
     if (l == NULL) 
 		return r;
@@ -109,7 +109,7 @@ Treap::ptrnode Treap::merge (ptrnode l, ptrnode r)
     }
 }
 
-Treap::ptrnode Treap::Find( int x, ptrnode t )
+Treap::Node* Treap::Find( int x, Node* t )
 {
 	if (t == NULL) 
 		return NULL;
@@ -129,11 +129,28 @@ void Treap::Add( int x )
 	{
 		root = new Node( x, rand() << 15 + rand(), NULL, NULL, NULL );
 		root->update();
-		exit;
+		return;
 	}
 
+	unint nk = rand() << 15 + rand();
 
+	if (nk >= root->key)
+	{
+		Node* tmp = new Node(x, nk, NULL, NULL, NULL);
+		split(x, root, tmp->l, tmp->r);
+		tmp->update();
+		root = tmp;
+		return;
+	}
 
+	Node* tmp = Find(x, root);
+	if (tmp)
+	{
+		if (nk > tmp->key)
+		{
+
+		}
+	}
 }
 
 int main()
