@@ -53,7 +53,7 @@ void RMQ::update(int v, int left, int right, int coverLeft, int coverRight, int 
 		update(2 * v + 2, left, right, mid + 1, coverRight, Add);
 	} else {
 		update(2 * v + 1, left, mid, coverLeft, mid, Add);
-		update(2 * v + 2, mid, right, mid, coverRight, Add);
+		update(2 * v + 2, mid + 1, right, mid + 1, coverRight, Add);
 	}
 	minim[v] = min(minim[2 * v + 1] + toAdd[2 * v + 1], minim[2 * v + 2] + toAdd[2 * v + 2]);
 }
@@ -69,7 +69,7 @@ int RMQ::getMin(int v, int left, int right, int coverLeft, int coverRight) {
 	} else if (mid  < left) {
 		return getMin(2 * v + 2, left, right, mid + 1, coverRight);
 	} else {
-		return min(getMin(2 * v + 1, left, mid, coverLeft, mid), getMin(2 * v + 2, mid, right, mid, coverRight));
+		return min(getMin(2 * v + 1, left, mid, coverLeft, mid), getMin(2 * v + 2, mid + 1, right, mid + 1, coverRight));
 	}
 }
 
