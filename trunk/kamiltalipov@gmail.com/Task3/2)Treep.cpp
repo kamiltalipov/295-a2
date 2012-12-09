@@ -4,11 +4,12 @@ using std :: cout;
 #include <cstdlib>
 #include <ctime>
 
+#include "BST.h"
 
 template <typename T> class Treep;
 
 template <typename T>
-class TreepNode
+class TreepNode : public BSTNode<T>
 {
     friend class Treep<T>;
 
@@ -16,148 +17,97 @@ public:
 
     TreepNode (const T& val)
         :
-        curVal (val),
+        BSTNode<T> :: BSTNode (val),
         prior (rand ()),
-        parent (NULL),
-        left (NULL),
-        right (NULL)
+        size (1)
     {
     }
 
     ~TreepNode ()
     {
-		delete left;
-        delete right;
-
-        if (parent != NULL)
-        {
-			if (parent->left == this)
-                parent->left = NULL;
-            else
-                parent->right = NULL;
-        }
+        if (BSTNode<T> :: parent != NULL)
+            static_cast<TreepNode<T>*> (BSTNode<T> :: parent)->size -= size;
+        BSTNode<T> :: ~BSTNode ();
     }
 
-    T getVal () const
+    TreepNode<T>* next () const
     {
-        return curVal;
+        return static_cast<TreepNode<T>*> (BSTNode<T> :: next ());
+    }
+    TreepNode<T>* prev () const
+    {
+        return static_cast<TreepNode<T>*> (BSTNode<T> :: prev ());
     }
 
-    TreepNode* next () const;
-    TreepNode* prev () const;
 
 protected:
-    T curVal;
-
     int prior;
 
-    TreepNode* parent;
-    TreepNode* left,
-             * right;
+    size_t size;
 
     TreepNode (const T& val, int _prior, TreepNode* _parent = NULL)
         :
-        curVal (val),
+        BSTNode<T> :: BSTNode (val, _parent),
         prior (_prior),
-        parent (_parent),
-        left (NULL),
-        right (NULL)
+        size (1)
     {
     }
 };
 
 template <typename T>
-TreepNode<T>* TreepNode<T> :: next () const
-{
-    if (right != NULL)
-    {
-        TreepNode<T>* res = right;
-        while (res->left != NULL)
-            res = res->left;
-        return res;
-    }
-
-	if (parent != NULL)
-	{
-		if (parent->left == this)
-			return parent;
-
-		TreepNode<T>* res = parent;
-		while (res->parent != NULL && res->parent->right == res)
-			res = res->parent;
-
-		res = res->parent;
-
-		return res;
-	}
-
-    return NULL;
-}
-
-template <typename T>
-TreepNode<T>* TreepNode<T> :: prev () const
-{
-    if (left != NULL)
-    {
-        TreepNode<T>* res = left;
-        while (res->right != NULL)
-            res = res->right;
-        return res;
-    }
-
-    if (parent != NULL)
-    {
-		if (parent->right == this)
-			return parent;
-
-		TreepNode<T>* res = parent;
-		while (res->parent != NULL && res->parent->left == res)
-			res = res->parent;
-
-		res = res->parent;
-
-		return res;
-    }
-
-    return NULL;
-}
-
-template <typename T>
-class Treep
+class Treep : public BSTTree<T>
 {
 public:
     Treep ()
         :
-        root (NULL)
+        BSTTree<T> :: BSTTree ()
     {
     }
 
     ~Treep ()
     {
-        delete root;
+		delete root;
+		root = NULL;
+        BSTTree<T> :: ~BSTTree ();
     }
 
     TreepNode<T>* find (const T& val) const
     {
-        return find (root, val);
+		return res = static_cast<TreepNode<T>*> (BSTTree<T> :: find (static_cast<TreepNode<T>*> (root), val));
     }
 
     TreepNode<T>* insert (const T& val)
     {
-        return insert (root, NULL, val, rand ());
+		TreepNode<T>* realRoot = static_cast<TreepNode<T>*> (root);
+        TreepNode<T>* res = insert (realRoot, NULL, val, rand ());
+		root = realRoot;
+		return res;
     }
 
     void remove (const T& toRemoveVal)
     {
-        return remove (root, toRemoveVal);
+		TreepNode<T>* realRoot = static_cast<TreepNode<T>*> (root);
+        remove (realRoot, toRemoveVal);
+		root = realRoot;
+    }
+
+    TreepNode<T>* getNthElem (size_t n) const
+    {
+        return getNthElem (static_cast<TreepNode<T>*> (root), n);
     }
 
 protected:
-    TreepNode<T>* root;
-
     TreepNode<T>* find (TreepNode<T>* node, const T& val) const;
     TreepNode<T>* insert (TreepNode<T>*& node, TreepNode<T>* parent, const T& val, int prior);
     void remove (TreepNode<T>*& node, const T& toRemoveVal);
+
+    size_t getNodeSize (const TreepNode<T>* node) const
+    {
+        return node == NULL ? 0 : node->size;
+    }
+
+    void updateNodeSize (TreepNode<T>*& node);
+    TreepNode<T>* getNthElem (TreepNode<T>* node, size_t n) const;
 
     void split (TreepNode<T>* node, const T& val, TreepNode<T>*& left, TreepNode<T>*& right)
     {
@@ -169,19 +119,33 @@ protected:
         }
         else if (val < node->curVal)
         {
-            split (node->left, val, left, node->left);
+			TreepNode<T>* nodeLeft = static_cast<TreepNode<T>*> (node->left);
+            split (nodeLeft, val, left, nodeLeft);
+			node->left = nodeLeft;
             right = node;
         }
         else
         {
-            split (node->right, val, node->right, right);
+			TreepNode<T>* nodeRight = static_cast<TreepNode<T>*> (node->right);
+            split (nodeRight, val, nodeRight, right);
+			node->right = nodeRight;
             left = node;
         }
 
-        if (node->left != NULL)
-            node->left->parent = node;
+		TreepNode<T>* nodeLeft = static_cast<TreepNode<T>*> (node->left);
+		TreepNode<T>* nodeRight = static_cast<TreepNode<T>*> (node->right);
+        if (nodeLeft != NULL)
+		{
+            nodeLeft->parent = node;
+			node->left = nodeLeft;
+		}
         if (node->right != NULL)
-            node->right->parent = node;
+		{
+            nodeRight->parent = node;
+			node->right = nodeRight;
+		}
+        updateNodeSize (left);
+        updateNodeSize (right);
     }
 
 	void merge (TreepNode<T>*& node, TreepNode<T>* left, TreepNode<T>* right)
@@ -198,23 +162,48 @@ protected:
 		}
 		else if (right->prior < left->prior)
 		{
-			merge (left->right, left->right, right);
-			TreepNode<T>* parent = node->parent;
-			node = left;
+			TreepNode<T>* leftRight = static_cast<TreepNode<T>*> (left->right);
+			merge (leftRight, leftRight, right);
+			left->right = leftRight;
+			updateNodeSize (left);
+			TreepNode<T>* parent = static_cast<TreepNode<T>*> (node->parent);
 			node->parent = parent;
-			node->right->parent = node;
+			node = left;
+			TreepNode<T>* nodeRight = static_cast<TreepNode<T>*> (node->right);
+			nodeRight->parent = node;
+			node->right = nodeRight;
 		}
 		else
 		{
-			merge (right->left, left, right->left);
-			TreepNode<T>* parent = node->parent;
-			node = right;
+			TreepNode<T>* rightLeft = static_cast<TreepNode<T>*> (right->left);
+			merge (rightLeft, left, rightLeft);
+			right->left = rightLeft;
+			updateNodeSize (right);
+			TreepNode<T>* parent = static_cast<TreepNode<T>*> (node->parent);
 			node->parent = parent;
-			node->left->parent = node;
+			node = right;
+			TreepNode<T>* nodeLeft = static_cast<TreepNode<T>*> (node->left);
+			nodeLeft->parent = node;
+			node->left = nodeLeft;
 		}
 
+        updateNodeSize (node);
 	}
 };
+
+template <typename T>
+TreepNode<T>* Treep<T> :: getNthElem (TreepNode<T>* node, size_t n) const
+{
+    if (node == NULL)
+        return NULL;
+
+    size_t leftSize = getNodeSize (static_cast<TreepNode<T>*> (node->left));
+    if (n <= leftSize)
+        return getNthElem (static_cast<TreepNode<T>*> (node->left), n);
+    if (n == leftSize + 1)
+        return node;
+    return getNthElem (static_cast<TreepNode<T>*> (node->right), n - leftSize - 1);
+}
 
 template <typename T>
 TreepNode<T>* Treep<T> :: find (TreepNode<T>* node, const T& val) const
@@ -241,12 +230,23 @@ TreepNode<T>* Treep<T> :: insert (TreepNode<T>*& node, TreepNode<T>* parent, con
     else if (prior < node->prior)
     {
         TreepNode<T>* res = new TreepNode<T> (val, prior, parent);
-        split (node, val, res->left, res->right);
+		TreepNode<T>* left = static_cast<TreepNode<T>*> (res->left),
+					* right = static_cast<TreepNode<T>*> (res->right);
+        split (node, val, left, right);
+		res->left = left;
+		res->right = right;
+        updateNodeSize (res);
         node = res;
         return node;
     }
 
-    return insert (val < node->curVal ? node->left : node->right, node, val, prior);
+	TreepNode<T>* left = static_cast<TreepNode<T>*> (node->left),
+				* right = static_cast<TreepNode<T>*> (node->right);
+	TreepNode<T>* res = insert (val < node->curVal ? left : right, node, val, prior);
+	node->left = left;
+	node->right = right;
+	updateNodeSize (node);
+    return res;
 }
 
 template <typename T>
@@ -258,14 +258,12 @@ void Treep<T> :: remove (TreepNode<T>*& node, const T& toRemoveVal)
 	if (node->curVal == toRemoveVal)
 	{
 		bool isLeftNode;
-		if (node->parent != NULL)
-			isLeftNode = node->parent->left == node;
+		TreepNode<T>* parent = static_cast<TreepNode<T>*> (node->parent);
+		if (parent != NULL)
+			isLeftNode = parent->left == node;
 
-		TreepNode<T>* left = node->left, * right = node->right,
-					* parent = node->parent;
-		node->left = NULL;
-		node->right = NULL;
-		delete node;
+		TreepNode<T>* left = static_cast<TreepNode<T>*> (node->left),
+				    * right = static_cast<TreepNode<T>*> (node->right);
 
 		merge (left, left, right);
 		if (left != NULL)
@@ -278,15 +276,48 @@ void Treep<T> :: remove (TreepNode<T>*& node, const T& toRemoveVal)
 				parent->right = left;
 		}
 
+		node->parent = parent;
+		node->left = NULL;
+		node->right = NULL;
+		delete node;
+
 		node = left;
+		updateNodeSize (node);
 	}
 	else
-		remove (toRemoveVal < node->curVal ? node->left : node->right, toRemoveVal);
+	{
+		TreepNode<T>* left = static_cast<TreepNode<T>*> (node->left),
+				    * right = static_cast<TreepNode<T>*> (node->right);
+		remove (toRemoveVal < node->curVal ? left : right, toRemoveVal);
+		node->left = left;
+		node->right = right;
+	}
+}
+
+template <typename T>
+void Treep<T> :: updateNodeSize (TreepNode<T>*& node)
+{
+    if (node == NULL)
+        return;
+
+    node->size = getNodeSize (static_cast<TreepNode<T>*> (node->left)) +
+			     getNodeSize (static_cast<TreepNode<T>*> (node->right)) + 1;
 }
 
 int main ()
 {
     srand (time (NULL));
+
+    Treep<int> t;
+    for (int i = 0; i < 25; ++i)
+		t.insert (i);
+
+    TreepNode<int>* node = t.getNthElem (20);
+    cout << node->getVal () << ' ';
+	t.remove (19);
+	node = t.getNthElem (20);
+	cout << node->getVal ();
+	cin.get ();
 
     return 0;
 }
