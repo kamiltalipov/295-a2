@@ -52,7 +52,7 @@ int main()
 	int n, ans = 0;
 	cin >> n;
 	vector <int> input (n);
-	Tree Ftree(n + 1);
+	Tree Ftree(n);
 	for (int i = 0; i < n; i++)
 	{
 		cin >> input[i];
