@@ -156,6 +156,35 @@ Treap::Node* Treap::Next( int x )
 	return tmp;
 }
 
+Treap::Node* Treap::Prev( int x )
+{
+	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
+	tmp = Find( x, root );
+	if (tmp)
+	{
+		if (tmp->l)
+		{
+			tmp = tmp->l;
+			while (tmp->r)
+				tmp = tmp->r;
+		}
+		else
+		{
+			while (tmp->par && (tmp->par->r != tmp))
+				tmp = tmp->par;
+			if (tmp->par)
+				tmp = tmp->par;
+			else
+				return NULL;
+				//if ((!tmp->par->l) || (tmp->par->l != tmp))
+					//return NULL;
+		}
+	}
+	else
+		return NULL;
+	return tmp;
+}
+
 void Treap::Add( int x )
 {
 	if (!root)
@@ -195,6 +224,23 @@ void Treap::Add( int x )
 	}
 }
 
+int Treap::kth ( int k )
+{
+	Node* fn = this->root;
+
+	while (fn->size != 1)
+	{
+		if ((fn->l) && (fn->l->size > k))
+		{
+			fn = fn->l;
+		}
+		else
+			if ((fn->r) && (fn->l->size <= k))
+				fn = fn->r;
+	}
+	return fn->data;
+}
+
 int main()
 {
 	freopen("input.txt", "r", stdin);
@@ -211,11 +257,54 @@ int main()
 
 
 	Treap::Node* nx = new Treap::Node(0, 0, NULL, NULL, NULL);
-	nx = tr.Next(3);
+	nx = tr.Prev(1);
 	if (nx)
 		cout << nx->data << endl;
 	else
 		cout << "-1" << endl;
+
+	cout << tr.kth(1) << endl;
+
+	/*cin >> n;
+	int y = 0;
+	char op, prop;
+	cin >> op;
+	while ( op == '?')
+	{
+		cin >> x;
+		cout << "-1" << endl;
+		n--;
+		cin >> op;
+		y = -1;
+	}
+	prop = op;
+	cin >> x;
+	Treap tr( (x + y) % 1000000000 );
+
+	while (n != 0)
+	{
+		cin >> op >> x;
+		if (op == '+')
+		{
+			if (prop == '?')
+				tr.Add((x + y) % 1000000000);
+			else
+				tr.Add(x);
+		}
+		else
+		{
+			Treap::Node* fn = tr.Find(x, tr.root);
+			if (!fn)
+				fn = tr.Next(x);
+			if (fn)
+				y = fn->data;
+			else
+				y = -1;
+			cout << y << endl;
+		}
+		n--;
+	}*/
+
 	fclose(stdin);
 	fclose(stdout);
 	return 0;
