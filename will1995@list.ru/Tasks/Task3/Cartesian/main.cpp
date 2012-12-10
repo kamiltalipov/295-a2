@@ -5,6 +5,8 @@
 
 using namespace std;
 
+template <class T>
+
 class Treap
 {
 public:
@@ -13,7 +15,7 @@ public:
 	struct Node
 	{
 		unint key, size;
-		int data;
+		T data;
 		Node *l, *r, *par;
 
 		bool operator == (Node* a)
@@ -39,7 +41,7 @@ public:
 			}
 		}
 
-		Node (int x, int y, Node* l, Node* r,  Node* par): data(x), key(y), l(l), r(r), par(par) 
+		Node (T x, int y, Node* l, Node* r,  Node* par): data(x), key(y), l(l), r(r), par(par) 
 		{
 			size = 1;
 			update();
@@ -51,26 +53,27 @@ public:
 			delete (r); 
 		};
 	};
-	Node* root;
+	Node *root;
 
-	Treap( int x ): root (new Node(x, (rand() << 15 + rand()), NULL, NULL, NULL)) {};
+	Treap( T x ): root (new Node(x, (rand() << 15 + rand()), NULL, NULL, NULL)) {};
 
-	void Add( int x );
-	void Remove( int x );
-	void split( int x, Node* nw, Node* &l, Node* &r );
+	void Add( T x );
+	void Remove( T x );
+	void split( T x, Node* nw, Node* &l, Node* &r );
 
 	int kth ( int k );
 
 	Node* merge( Node* l, Node* r );
 
-	Node* Find( int x, Node* t );
-	Node* Next( int x );
-	Node* Prev( int x );
+	Node* Find( T x, Node* t );
+	Node* Next( T x );
+	Node* Prev( T x );
 
 	unint size( Treap &t ) { return t.root->size ;};
 };
 
-void Treap::split ( int x, Node* t, Node* &l, Node* &r )
+template <class T>
+void Treap<T>::split( T x, Node* t, Node* &l, Node* &r )
 {
 	if (!t)
 	{
@@ -93,7 +96,8 @@ void Treap::split ( int x, Node* t, Node* &l, Node* &r )
 	if (r) { r->par = NULL, r->update (); };
 }
 
-Treap::Node* Treap::merge (Node* l, Node* r)
+template <class T>
+typename Treap<T>::Node* Treap<T>::merge(typename Treap<T>::Node* l, typename  Treap<T>::Node* r)
 {
     if (l == NULL) 
 		return r;
@@ -113,7 +117,8 @@ Treap::Node* Treap::merge (Node* l, Node* r)
     }
 }
 
-Treap::Node* Treap::Find( int x, Node* t )
+template <class T>
+typename Treap<T>::Node* Treap<T>::Find( T x, typename Node* t )
 {
 	if (t == NULL) 
 		return NULL;
@@ -127,7 +132,8 @@ Treap::Node* Treap::Find( int x, Node* t )
 	return t;
 }
 
-Treap::Node* Treap::Next( int x )
+template <class T>
+typename Treap<T>::Node* Treap<T>::Next( T x )
 {
 	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
 	tmp = Find( x, root );
@@ -147,8 +153,6 @@ Treap::Node* Treap::Next( int x )
 				tmp = tmp->par;
 			else
 				return NULL;
-				//if ((!tmp->par->l) || (tmp->par->l != tmp))
-					//return NULL;
 		}
 	}
 	else
@@ -156,7 +160,8 @@ Treap::Node* Treap::Next( int x )
 	return tmp;
 }
 
-Treap::Node* Treap::Prev( int x )
+template <class T>
+typename Treap<T>::Node* Treap<T>::Prev( T x )
 {
 	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
 	tmp = Find( x, root );
@@ -176,8 +181,6 @@ Treap::Node* Treap::Prev( int x )
 				tmp = tmp->par;
 			else
 				return NULL;
-				//if ((!tmp->par->l) || (tmp->par->l != tmp))
-					//return NULL;
 		}
 	}
 	else
@@ -185,7 +188,8 @@ Treap::Node* Treap::Prev( int x )
 	return tmp;
 }
 
-void Treap::Add( int x )
+template <class T>
+void Treap<T>::Add( T x )
 {
 	if (!root)
 	{
@@ -224,19 +228,22 @@ void Treap::Add( int x )
 	}
 }
 
-int Treap::kth ( int k )
+template <class T>
+int Treap<T>::kth ( int k )
 {
 	Node* fn = this->root;
 
 	while (fn->size != 1)
 	{
-		if ((fn->l) && (fn->l->size > k))
+		if ((fn->l) && (fn->l->size > (k - 1)))
 		{
 			fn = fn->l;
 		}
 		else
-			if ((fn->r) && (fn->l->size <= k))
+			if ((fn->r) && (fn->l->size < (k - 1)))
 				fn = fn->r;
+			else
+				return fn->data;
 	}
 	return fn->data;
 }
@@ -248,7 +255,7 @@ int main()
 	int n, x;
 	cin >> n;
 	cin >> x;
-	Treap tr(x);
+	Treap<int> tr(x);
 	for(int i = 1; i < n; i++)
 	{
 		cin >> x;
@@ -256,14 +263,14 @@ int main()
 	}
 
 
-	Treap::Node* nx = new Treap::Node(0, 0, NULL, NULL, NULL);
+	Treap<int>::Node* nx = new Treap<int>::Node(0, 0, NULL, NULL, NULL);
 	nx = tr.Prev(1);
 	if (nx)
 		cout << nx->data << endl;
 	else
 		cout << "-1" << endl;
 
-	cout << tr.kth(1) << endl;
+	cout << tr.kth(3) << endl;
 
 	/*cin >> n;
 	int y = 0;
