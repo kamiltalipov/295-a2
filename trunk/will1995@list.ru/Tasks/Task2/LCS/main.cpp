@@ -57,17 +57,18 @@ int main()
 
 
 	vector <int> ans;
-	ans.push_back(b[indmax]);
+	ans.push_back(a[indmax]);
+	cout << length << endl;
 	length--;
 	while (length != 0)
 	{
 		indmax = prev[indmax];
-		ans.push_back(b[indmax]);
+		ans.push_back(a[indmax]);
 		length--;
 	}
 
-	for (int i = ans.size() - 1; i >= 0; i--)
-		cout << a[i] << ' ';
+	for (int i = 0; i < ans.size(); i++)
+		cout << ans[i] << ' ';
 	cout << endl;
 	fclose(stdin);
 	fclose(stdout);
