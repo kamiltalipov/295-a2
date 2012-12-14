@@ -43,12 +43,12 @@ public:
 	Tree ( int x ): root(new Node (x, NULL, NULL, NULL)) {};
 
 	void Add( int x );
-	void Remove();
-	void Print();
+	void Remove ( int x );
+	//void Print();
 
 private:
-	Node *rotate_right();
-	Node *rotate_left();
+	Node *rotate_right( Node *p );
+	Node *rotate_left( Node *p);
 	int count_balance( Node *v ) 
 	{
 		if (v)
@@ -60,7 +60,7 @@ private:
 		}
 	}
 
-	Node* balance();
+	Node* balance( Node *p );
 	Node* min( Node *v ) 
 	{
 		if ( v->l )
