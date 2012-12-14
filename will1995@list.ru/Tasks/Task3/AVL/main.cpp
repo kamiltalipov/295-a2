@@ -19,13 +19,13 @@ public:
 			int ls, rs = 0;
 			if (this->l)
 			{
-				this->l->par = this;
 				ls = this->l->depth;
+				this->l->par = this;
 			}
 			if (this->r)
 			{
-				this->r->par = this;
 				rs = this->r->depth;
+				this->r->par = this;
 			}
 			this->depth = 1 + max(ls, rs);
 		}
