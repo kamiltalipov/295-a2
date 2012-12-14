@@ -16,18 +16,18 @@ public:
 
 		void update()
 		{
-			if (this)
-				depth = 1;
+			int ls, rs = 0;
 			if (l)
 			{
 				l->par = this;
-				depth += l->depth;
+				ls = l->depth;
 			}
 			if (r)
 			{
 				r->par = this;
-				depth += r->depth;
+				rs = r->depth;
 			}
+			depth = 1 + max(ls, rs);
 		}
 
 		Node (int val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
@@ -42,7 +42,7 @@ public:
 
 	Tree ( int x ): root(new Node (x, NULL, NULL, NULL)) {};
 
-	void Add();
+	void Add( int x );
 	void Remove();
 	void Print();
 
