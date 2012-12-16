@@ -4,6 +4,7 @@
 
 using namespace std;
 
+template <class T>
 class Tree
 {
 public:
@@ -11,7 +12,8 @@ public:
 	typedef unsigned int unint;
 	struct Node
 	{
-		int val, depth;
+		int depth;
+		T val;
 		Node *l, *r, *par;
 
 		void update()
@@ -33,7 +35,7 @@ public:
 			}
 		}
 
-		Node (int val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
+		Node (T val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
 
 		~Node()
 		{
@@ -43,11 +45,11 @@ public:
 	}; 
 	Node *root;
 
-	Tree ( int x ): root(new Node (x, NULL, NULL, NULL)) {};
+	Tree ( T x ): root(new Node (x, NULL, NULL, NULL)) {};
 
-	Node* Add( Node* v, int x );
-	bool Find( int x );
-	void Remove ( int x );
+	Node* Add( Node* v, T x );
+	bool Find( T x );
+	void Remove ( T x );
 	//void Print();
 
 private:
@@ -76,7 +78,8 @@ private:
 	Node *rem_min( Node *v );
 };
 
-bool Tree::Find ( int x )
+template <class T>
+bool Tree<T>::Find ( typename T x )
 {
 	Node *tmp = root;
 	while (tmp)
@@ -92,7 +95,8 @@ bool Tree::Find ( int x )
 	return false;
 }
 
-Tree::Node* Tree::rotate_right(Tree::Node *v)
+template <class T>
+typename Tree<T>::Node* Tree<T>::rotate_right(typename Tree<T>::Node *v)
 {
 	if (!v)
 		return NULL;
@@ -129,7 +133,8 @@ Tree::Node* Tree::rotate_right(Tree::Node *v)
 	}
 }
 
-Tree::Node* Tree::rotate_left(Tree::Node *v)
+template <class T>
+typename Tree<T>::Node* Tree<T>::rotate_left(typename Tree<T>::Node *v)
 {
 	if (!v)
 		return NULL;
@@ -166,7 +171,8 @@ Tree::Node* Tree::rotate_left(Tree::Node *v)
 	}
 }
 
-Tree::Node* Tree::balance(Tree::Node* v)
+template <class T>
+typename Tree<T>::Node* Tree<T>::balance(typename Tree<T>::Node* v)
 {
 	v->update();
 	int b = count_balance(v);
@@ -185,7 +191,8 @@ Tree::Node* Tree::balance(Tree::Node* v)
 	return v;
 }
 
-Tree::Node* Tree::Add(Tree::Node* v, int x)
+template <class T>
+typename Tree<T>::Node* Tree<T>::Add(typename Tree<T>::Node* v, T x)
 {
 	if ( !v )
 		return new Node(x, NULL, NULL, NULL);
@@ -204,7 +211,7 @@ int main()
 	int n, x;
 	cin >> n;
 	cin >> x;
-	Tree tr(x);
+	Tree<int> tr(x);
 	for(int i = 1; i < n; i++)
 	{
 		cin >> x;
