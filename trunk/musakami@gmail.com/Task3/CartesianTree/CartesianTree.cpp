@@ -93,8 +93,6 @@ public:
             cout << t -> x << " ";
     }
 
-protected:
-
     BSTNode* min(BSTNode *t)
     {
         BSTNode *current = t;
@@ -125,7 +123,7 @@ protected:
         } while (t != NULL && t -> right == last);
         return t;
     }
-
+protected:
     BSTNode* Add(BSTNode *t, Value_Type x)
     {
         if (t == NULL)
