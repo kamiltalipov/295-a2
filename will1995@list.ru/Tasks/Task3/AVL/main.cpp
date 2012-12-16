@@ -16,18 +16,21 @@ public:
 
 		void update()
 		{
-			int ls, rs = 0;
-			if (this->l)
+			if (this)
 			{
-				ls = this->l->depth;
-				this->l->par = this;
+				int ls, rs = 0;
+				if (this->l)
+				{
+					ls = this->l->depth;
+					this->l->par = this;
+				}
+				if (this->r)
+				{
+					rs = this->r->depth;
+					this->r->par = this;
+				}
+				this->depth = 1 + max(ls, rs);
 			}
-			if (this->r)
-			{
-				rs = this->r->depth;
-				this->r->par = this;
-			}
-			this->depth = 1 + max(ls, rs);
 		}
 
 		Node (int val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
@@ -43,6 +46,7 @@ public:
 	Tree ( int x ): root(new Node (x, NULL, NULL, NULL)) {};
 
 	Node* Add( Node* v, int x );
+	bool Find( int x );
 	void Remove ( int x );
 	//void Print();
 
@@ -72,20 +76,57 @@ private:
 	Node *rem_min( Node *v );
 };
 
+bool Tree::Find ( int x )
+{
+	Node *tmp = root;
+	while (tmp)
+	{
+		if ( x == tmp->val )
+			return true;
+		else
+			if (x < tmp->val)
+				tmp = tmp ->l;
+			else
+				tmp = tmp->r;
+	}
+	return false;
+}
+
 Tree::Node* Tree::rotate_right(Tree::Node *v)
 {
 	if (!v)
 		return NULL;
 
-	Node *tmp = v->l;
-	if (!tmp)
-		return v;
+	Node *p = v->par;
 
+	bool flag;
+	if (p)
+		if (p->l == v)
+			flag = true;
+		else
+			flag = false;
+	p->update();
+
+	Node *tmp = v->l;
 	v->l = tmp->r;
 	tmp->r = v;
 	v->update();
 	tmp->update();
-	return tmp;
+
+	if (p)
+	{
+		if (flag)
+			p->l = tmp;
+		else
+			p->r = tmp;
+		p->update();
+		return p;
+	}
+	else
+	{
+		tmp->par = (Node*)0;
+		return tmp;
+	}
 }
 
 Tree::Node* Tree::rotate_left(Tree::Node *v)
@@ -93,15 +134,36 @@ Tree::Node* Tree::rotate_left(Tree::Node *v)
 	if (!v)
 		return NULL;
 
-	Node *tmp = v->r;
-	if (!tmp)
-		return v;
+	Node *p = v->par;
 
+	bool flag;
+	if (p)
+		if (p->l == v)
+			flag = true;
+		else
+			flag = false;
+	p->update();
+
+	Node *tmp = v->r;
 	v->r = tmp->l;
 	tmp->l = v;
 	v->update();
 	tmp->update();
-	return tmp;
+
+	if (p)
+	{
+		if (flag)
+			p->l = tmp;
+		else
+			p->r = tmp;
+		p->update();
+		return p;
+	}
+	else
+	{
+		tmp->par = (Node*)0;
+		return tmp;
+	}
 }
 
 Tree::Node* Tree::balance(Tree::Node* v)
@@ -111,7 +173,7 @@ Tree::Node* Tree::balance(Tree::Node* v)
 	if (b == 2)
 	{
 		if ( count_balance(v->l) < 0)
-			v->l = rotate_right(v->l);
+			v->l = rotate_left(v->l);
 		v = rotate_right(v);
 	}
 	else if (b == -2)
@@ -146,7 +208,12 @@ int main()
 	for(int i = 1; i < n; i++)
 	{
 		cin >> x;
-		tr.Add(tr.root, x);
+		if (!tr.Find(x))
+		{
+			tr.Add(tr.root, x);
+			while (tr.root->par)
+				tr.root = tr.root->par;
+		}
 	}
 
 	return 0;
