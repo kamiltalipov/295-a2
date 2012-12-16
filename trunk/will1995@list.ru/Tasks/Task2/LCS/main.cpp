@@ -6,9 +6,46 @@
 
 using namespace std;
 
-void lcs(string &a, string &b)
+void lcis(vector <int> &a, vector <int> &b, vector<int> &ans)
 {
+	int n = a.size();
+	int m = b.size();
+	vector <int> dp (max (a.size(), b.size()) + 1, -1);
+	vector <int> prev (max (a.size(), b.size()) + 1, -1);
 
+	int indmax = 0, length = 0;
+	for (int i = 0; i < m; i++)
+	{
+		int current = 0, last = -1;
+		for (int j = 0; j < n; j++)
+		{
+			if ((a[j] == b[i]) && ((current + 1) > dp[j]))
+			{
+				dp[j] = current + 1;
+				if (dp[j] > length)
+				{
+					length = dp[j];
+					indmax = j;
+				}
+				prev[j] = last;
+			}
+			else
+				if ((a[j] < b[i]) && (current < dp[j]))
+				{
+					current = dp[j];
+					last = j;
+				}
+		}
+	}
+
+	//length++;
+	length--;
+	while (length != -1)
+	{
+		ans.push_back(a[length]);
+		length = prev[length];
+	}
+	reverse(ans.begin(), ans.end());
 }
 
 int main()
@@ -26,45 +63,28 @@ int main()
 	for(int i = 0; i < m; i++)
 		cin >> b[i];
 
+	vector<int> ans;
+	lcis(a, b, ans);
 
-	vector <int> dp (max (n, m) + 1);
-	vector <int> prev (max (n, m) + 1);
-
-	int current = 0;
-	int last = -1;
-	int length = 0;
-	int indmax = 0;
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < m; j++)
-		{
-			if ((a[i] == b[j]) && ((current + 1) > dp[j]))
-			{
-				dp[j] = current + 1;
-				if (dp[j] > length)
-				{
-					length = dp[j];
-					indmax = j;
-				}
-				prev[j] = last;
-			}
-			else
-				if ((a[i] > b[j]) && (current < dp[j]))
-				{
-					current = dp[j];
-					last = j;
-				}
-		}
-
-
-	vector <int> ans;
-	ans.push_back(a[indmax]);
-	cout << length << endl;
-	length--;
-	while (length != 0)
+	for(int i = 1; i < ans.size(); i++)
 	{
-		indmax = prev[indmax];
-		ans.push_back(a[indmax]);
-		length--;
+		if (ans[i] <= ans[i - 1])
+		{
+			ans.clear();
+			lcis(b, a, ans);
+			break;
+		}
+	}
+
+	int tmp = 0;
+	for(int i = 0; i < min(a.size(), ans.size()); i++)
+		if (ans[tmp] == a[tmp])
+			tmp++;
+
+	if (tmp != ans.size())
+	{
+		ans.clear();
+		lcis(b, |a, ans);
 	}
 
 	for (int i = 0; i < ans.size(); i++)
