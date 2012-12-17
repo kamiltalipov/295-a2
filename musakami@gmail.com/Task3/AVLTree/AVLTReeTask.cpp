@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-//NOT FINAL DO NOT READ
+
 using namespace std;
 
 template<class Value_Type, typename _Compare = less<Value_Type> >
@@ -93,8 +93,6 @@ public:
             cout << t -> x << " ";
     }
 
-protected:
-
     BSTNode* min(BSTNode *t)
     {
         BSTNode *current = t;
@@ -125,7 +123,7 @@ protected:
         } while (t != NULL && t -> right == last);
         return t;
     }
-
+protected:
     BSTNode* Add(BSTNode *t, Value_Type x)
     {
         if (t == NULL)
@@ -187,16 +185,17 @@ protected:
     }
 };
 
-class Treap:public BST<int>
+template<class Value_Type, typename _Compare = less<Value_Type> >
+class Treap:public BST<Value_Type, _Compare>
 {
 public:
-    class TNode: public BST<int>::BSTNode
+    class TNode: public BST<Value_Type, _Compare>::BSTNode
     {
     public:
         int y;
         int size;
 
-        TNode(int x, int y, BSTNode *parent): BSTNode(x, parent)
+        TNode(int x, int y, typename BST<Value_Type, _Compare>::BSTNode *parent): BST<Value_Type, _Compare>::BSTNode(x, parent)
         {
             this -> y = y;
             size = 1;
@@ -204,20 +203,20 @@ public:
     };
 private:
 
-    int GetSize(BSTNode *t)
+    int GetSize(typename BST<Value_Type, _Compare>::BSTNode *t)
     {
         if (t == NULL)
             return 0;
         return static_cast<TNode*>(t) -> size;
     }
 
-    void Update(BSTNode *t)
+    void Update(typename BST<Value_Type, _Compare>::BSTNode *t)
     {
         if (t != NULL)
             static_cast<TNode*>(t) -> size = GetSize(t -> left) + GetSize(t -> right) + 1;
     }
 
-    void split(BSTNode *t, int x, BSTNode* &left, BSTNode* &right)
+    void split(typename BST<Value_Type, _Compare>::BSTNode *t, int x, typename BST<Value_Type, _Compare>::BSTNode* &left, typename BST<Value_Type, _Compare>::BSTNode* &right)
     {
         if (t == NULL)
         {
@@ -251,13 +250,13 @@ private:
         Update(right);
     }
 
-    BSTNode* merge(BSTNode *left, BSTNode *right)
+    typename BST<Value_Type, _Compare>::BSTNode* merge(typename BST<Value_Type, _Compare>::BSTNode *left, typename BST<Value_Type, _Compare>::BSTNode *right)
     {
         if (left == NULL)
             return right;
         if (right == NULL)
             return left;
-        BSTNode* result;
+        typename BST<Value_Type, _Compare>::BSTNode* result;
         if (static_cast<TNode*>(left) -> y < static_cast<TNode*>(right) -> y)
         {
             result = left;
@@ -276,7 +275,7 @@ private:
         return result;
     }
 
-    BSTNode* Add(BSTNode *t, int x, int y, BSTNode* parent)
+    typename BST<Value_Type, _Compare>::BSTNode* Add(typename BST<Value_Type, _Compare>::BSTNode *t, int x, int y, typename BST<Value_Type, _Compare>::BSTNode* parent)
     {
         if (t == NULL)
             return new TNode(x, y, parent);
@@ -299,13 +298,13 @@ private:
         return t;
     }
 
-    BSTNode* Erase(BSTNode* t, int x)
+    typename BST<Value_Type, _Compare>::BSTNode* Erase(typename BST<Value_Type, _Compare>::BSTNode* t, int x)
     {
         if (t == NULL)
             return NULL;
         if (t -> x == x)
         {
-            BSTNode* result = merge(t -> left, t -> right);
+            typename BST<Value_Type, _Compare>::BSTNode* result = merge(t -> left, t -> right);
             t -> left = NULL;
             t -> right = NULL;
             delete t;
@@ -327,7 +326,7 @@ private:
         return t;
     }
 
-    int GetAt(BSTNode *t, int k)
+    int GetAt(typename BST<Value_Type, _Compare>::BSTNode *t, int k)
     {
         if (t == NULL)
             return -1;
@@ -341,24 +340,25 @@ private:
 public:
     void Add(int x)
     {
-        head = Add(head, x, rand(), NULL);
-        head -> parent = NULL;
+        BST<Value_Type, _Compare>::head = Add(BST<Value_Type, _Compare>::head, x, rand(), NULL);
+        BST<Value_Type, _Compare>::head -> parent = NULL;
     }
 
     void Erase(int x)
     {
-        head = Erase(head, x);
-        if (head != NULL)
-            head -> parent = NULL;
+        BST<Value_Type, _Compare>::head = Erase(BST<Value_Type, _Compare>::head, x);
+        if (BST<Value_Type, _Compare>::head != NULL)
+            BST<Value_Type, _Compare>::head -> parent = NULL;
     }
 
     int GetAt(int k)
     {
-        return GetAt(head, k);
+        return GetAt(BST<Value_Type, _Compare>::head, k);
     }
 };
 
-class AVLTree:public BST<int>
+template<class Value_Type, typename _Compare = less<Value_Type> >
+class AVLTree:public BST<Value_Type, _Compare>
 {
 public:
     class TNode: public BST<int>::BSTNode
@@ -375,30 +375,30 @@ public:
     };
 private:
 
-    int GetHeight(BSTNode* t)
+    int GetHeight(typename BST<Value_Type, _Compare>::BSTNode* t)
     {
         if (t == NULL)
             return 0;
         return static_cast<TNode*>(t) -> height;
     }
 
-    void Update(BSTNode* t)
+    void Update(typename BST<Value_Type, _Compare>::BSTNode* t)
     {
         if (t != NULL)
             static_cast<TNode*>(t) -> height = std::max(GetHeight(t -> left), GetHeight(t -> right)) + 1;
     }
 
-    int Diff(BSTNode* t)
+    int Diff(typename BST<Value_Type, _Compare>::BSTNode* t)
     {
         if (t == NULL)
             return 0;
         return GetHeight(t -> left) - GetHeight(t -> right);
     }
 
-    BSTNode* SmallLeftRotation(BSTNode* a)
+    typename BST<Value_Type, _Compare>::BSTNode* SmallLeftRotation(typename BST<Value_Type, _Compare>::BSTNode* a)
     {
-        BSTNode* b = a -> right;
-        BSTNode* middle = b -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* b = a -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* middle = b -> left;
         b -> left = a;
         b -> parent = a -> parent;
         a -> right = middle;
@@ -410,12 +410,12 @@ private:
         return b;
     }
 
-    BSTNode* BigLeftRotation(BSTNode *a)
+    typename BST<Value_Type, _Compare>::BSTNode* BigLeftRotation(typename BST<Value_Type, _Compare>::BSTNode *a)
     {
-        BSTNode* b = a -> right;
-        BSTNode* c = b -> left;
-        BSTNode* cleft = c -> left;
-        BSTNode* cright = c -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* b = a -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* c = b -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* cleft = c -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* cright = c -> right;
         c -> left = a;
         c -> right = b;
         c -> parent = a -> parent;
@@ -433,10 +433,10 @@ private:
         return c;
     }
 
-    BSTNode* SmallRightRotation(BSTNode* a)
+    typename BST<Value_Type, _Compare>::BSTNode* SmallRightRotation(typename BST<Value_Type, _Compare>::BSTNode* a)
     {
-        BSTNode* b = a -> left;
-        BSTNode* middle = b -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* b = a -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* middle = b -> right;
         b -> right = a;
         b -> parent = a -> parent;
         a -> left = middle;
@@ -448,12 +448,12 @@ private:
         return b;
     }
 
-    BSTNode* BigRightRotation(BSTNode *a)
+    typename BST<Value_Type, _Compare>::BSTNode* BigRightRotation(typename BST<Value_Type, _Compare>::BSTNode *a)
     {
-        BSTNode* b = a -> left;
-        BSTNode* c = b -> right;
-        BSTNode* cleft = c -> left;
-        BSTNode* cright = c -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* b = a -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* c = b -> right;
+        typename BST<Value_Type, _Compare>::BSTNode* cleft = c -> left;
+        typename BST<Value_Type, _Compare>::BSTNode* cright = c -> right;
         c -> right = a;
         c -> left = b;
         c -> parent = a -> parent;
@@ -471,9 +471,9 @@ private:
         return c;
     }
 
-    void Balance(BSTNode *t)
+    void Balance(typename BST<Value_Type, _Compare>::BSTNode *t)
     {
-        BSTNode *parent = t -> parent;
+        typename BST<Value_Type, _Compare>::BSTNode *parent = t -> parent;
         bool left = false;
         if (parent != NULL && parent -> left == t)
             left = true;
@@ -489,7 +489,7 @@ private:
             else
                 t = SmallRightRotation(t);
         if (parent == NULL)
-            head = t;
+            BST<Value_Type, _Compare>::head = t;
         else
         {
             if (left)
@@ -499,9 +499,9 @@ private:
         }
     }
 
-    void Restore(BSTNode *t)
+    void Restore(typename BST<Value_Type, _Compare>::BSTNode *t)
     {
-        BSTNode* current = t;
+        typename BST<Value_Type, _Compare>::BSTNode* current = t;
         while (current != NULL)
         {
             Update(current);
@@ -510,13 +510,13 @@ private:
         }
     }
 
-    pair<BSTNode*, BSTNode*> Add(BSTNode *t, bool close, int x)
+    pair<typename BST<Value_Type, _Compare>::BSTNode*, typename BST<Value_Type, _Compare>::BSTNode*> Add(typename BST<Value_Type, _Compare>::BSTNode *t, bool close, int x)
     {
         if (t == NULL)
-            return make_pair(new TNode(x, close, NULL), (BSTNode*)NULL);
+            return make_pair(new TNode(x, close, NULL), (typename BST<Value_Type, _Compare>::BSTNode*)NULL);
         if (x == t -> x)
-            return make_pair(t, (BSTNode*)NULL);
-        BSTNode *current = t;
+            return make_pair(t, (typename BST<Value_Type, _Compare>::BSTNode*)NULL);
+        typename BST<Value_Type, _Compare>::BSTNode *current = t;
         while (true)
             if (x < current -> x)
             {
@@ -540,11 +540,11 @@ private:
             }
     }
 
-    BSTNode* Erase(BSTNode* t)
+    typename BST<Value_Type, _Compare>::BSTNode* Erase(typename BST<Value_Type, _Compare>::BSTNode* t)
     {
         if (t -> left == NULL)
         {
-            BSTNode* result = t -> right;
+            typename BST<Value_Type, _Compare>::BSTNode* result = t -> right;
             t -> right = NULL;
             if (result != NULL)
                 result -> parent = t -> parent;
@@ -553,7 +553,7 @@ private:
         }
         else
         {
-            BSTNode* result = max(t -> left);
+            typename BST<Value_Type, _Compare>::BSTNode* result = max(t -> left);
             if (result -> parent != t)
                 result -> parent -> right = result -> left;
             else
@@ -574,31 +574,31 @@ public:
 
     void Add(int x, bool close)
     {
-        pair<BSTNode*, BSTNode*> result = Add(head, close, x);
-        head = result.first;
+        pair<typename BST<Value_Type, _Compare>::BSTNode*, typename BST<Value_Type, _Compare>::BSTNode*> result = Add(BST<Value_Type, _Compare>::head, close, x);
+        BST<Value_Type, _Compare>::head = result.first;
         Restore(result.second);
     }
 
     void Erase(int x)
     {
-        BSTNode* t = Find(x);
+        typename BST<Value_Type, _Compare>::BSTNode* t = BST<Value_Type, _Compare>::Find(x);
         if (t == NULL)
             return;
-        if (t == head)
+        if (t == BST<Value_Type, _Compare>::head)
         {
-            head = Erase(head);
-            if (head != NULL)
+            BST<Value_Type, _Compare>::head = Erase(BST<Value_Type, _Compare>::head);
+            if (BST<Value_Type, _Compare>::head != NULL)
             {
-                if (head -> left != NULL)
-                    Restore(max(head -> left));
+                if (BST<Value_Type, _Compare>::head -> left != NULL)
+                    Restore(max(BST<Value_Type, _Compare>::head -> left));
                 else
-                    Restore(head);
+                    Restore(BST<Value_Type, _Compare>::head);
             }
         }
         else
             if (t -> parent -> left == t)
             {
-                BSTNode* parent = t -> parent;
+                typename BST<Value_Type, _Compare>::BSTNode* parent = t -> parent;
                 parent -> left = Erase(t);
                 if (parent -> left != NULL)
                     if (parent -> left -> left != NULL)
@@ -610,7 +610,7 @@ public:
             }
             else
             {
-                BSTNode* parent = t -> parent;
+                typename BST<Value_Type, _Compare>::BSTNode* parent = t -> parent;
                 parent -> right = Erase(t);
                 if (parent -> right != NULL)
                     if (parent -> right -> left != NULL)
@@ -625,7 +625,7 @@ public:
     bool Check()
     {
         int cnt = 0;
-        for (BSTNode *current = min(); current != NULL; current = next(current))
+        for (typename BST<Value_Type, _Compare>::BSTNode *current = BST<Value_Type, _Compare>::min(); current != NULL; current = BST<Value_Type, _Compare>::next(current))
         {
             if (!static_cast<TNode*>(current) -> close)
                 cnt++;
@@ -642,7 +642,7 @@ int main()
 {
     int n;
     cin >> n;
-    AVLTree tree;
+    AVLTree<int> tree;
     for (int i = 0; i < n; i++)
     {
         int k1, k2;
