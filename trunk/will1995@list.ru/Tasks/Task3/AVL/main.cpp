@@ -4,7 +4,7 @@
 
 using namespace std;
 
-template <class T>
+
 class Tree
 {
 public:
@@ -13,12 +13,12 @@ public:
 	struct Node
 	{
 		int depth;
-		T val;
+		int val;
 		Node *l, *r, *par;
 
 		void update()
 		{
-			if (this)
+			//if (this)
 			{
 				int ls, rs = 0;
 				if (this->l)
@@ -35,7 +35,7 @@ public:
 			}
 		}
 
-		Node (T val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
+		Node (int val, Node *l, Node *r, Node* par): val(val), depth(1), l(l), r(r), par(par) { update(); };
 
 		~Node()
 		{
@@ -45,11 +45,11 @@ public:
 	}; 
 	Node *root;
 
-	Tree ( T x ): root(new Node (x, NULL, NULL, NULL)) {};
+	Tree ( int x ): root(new Node (x, NULL, NULL, NULL)) {};
 
-	Node* Add( Node* v, T x );
-	bool Find( T x );
-	void Remove ( T x );
+	Node* Add( Node* v, int x );
+	Node* Find( int x );
+	bool Remove ( int x );
 	//void Print();
 
 private:
@@ -78,25 +78,25 @@ private:
 	Node *rem_min( Node *v );
 };
 
-template <class T>
-bool Tree<T>::Find ( typename T x )
+
+Tree::Node* Tree::Find (  int x )
 {
 	Node *tmp = root;
 	while (tmp)
 	{
 		if ( x == tmp->val )
-			return true;
+			return tmp;
 		else
 			if (x < tmp->val)
 				tmp = tmp ->l;
 			else
 				tmp = tmp->r;
 	}
-	return false;
+	return NULL;
 }
 
-template <class T>
-typename Tree<T>::Node* Tree<T>::rotate_right(typename Tree<T>::Node *v)
+
+ Tree::Node* Tree::rotate_right( Tree::Node *v)
 {
 	if (!v)
 		return NULL;
@@ -105,17 +105,22 @@ typename Tree<T>::Node* Tree<T>::rotate_right(typename Tree<T>::Node *v)
 
 	bool flag;
 	if (p)
+	{
 		if (p->l == v)
 			flag = true;
 		else
 			flag = false;
-	p->update();
+		p->update();
+	}
 
 	Node *tmp = v->l;
 	v->l = tmp->r;
 	tmp->r = v;
-	v->update();
-	tmp->update();
+	if (v)
+		v->update();
+
+	if (tmp)
+		tmp->update();
 
 	if (p)
 	{
@@ -133,8 +138,8 @@ typename Tree<T>::Node* Tree<T>::rotate_right(typename Tree<T>::Node *v)
 	}
 }
 
-template <class T>
-typename Tree<T>::Node* Tree<T>::rotate_left(typename Tree<T>::Node *v)
+
+ Tree::Node* Tree::rotate_left( Tree::Node *v)
 {
 	if (!v)
 		return NULL;
@@ -143,17 +148,22 @@ typename Tree<T>::Node* Tree<T>::rotate_left(typename Tree<T>::Node *v)
 
 	bool flag;
 	if (p)
+	{
 		if (p->l == v)
 			flag = true;
 		else
 			flag = false;
-	p->update();
+		p->update();
+	}
 
 	Node *tmp = v->r;
 	v->r = tmp->l;
 	tmp->l = v;
-	v->update();
-	tmp->update();
+	if (v)
+		v->update();
+
+	if (tmp)
+		tmp->update();
 
 	if (p)
 	{
@@ -171,8 +181,8 @@ typename Tree<T>::Node* Tree<T>::rotate_left(typename Tree<T>::Node *v)
 	}
 }
 
-template <class T>
-typename Tree<T>::Node* Tree<T>::balance(typename Tree<T>::Node* v)
+
+ Tree::Node* Tree::balance( Tree::Node* v)
 {
 	v->update();
 	int b = count_balance(v);
@@ -191,8 +201,8 @@ typename Tree<T>::Node* Tree<T>::balance(typename Tree<T>::Node* v)
 	return v;
 }
 
-template <class T>
-typename Tree<T>::Node* Tree<T>::Add(typename Tree<T>::Node* v, T x)
+
+ Tree::Node* Tree::Add( Tree::Node* v, int x)
 {
 	if ( !v )
 		return new Node(x, NULL, NULL, NULL);
@@ -203,6 +213,114 @@ typename Tree<T>::Node* Tree<T>::Add(typename Tree<T>::Node* v, T x)
 	return balance(v);
 }
 
+ bool Tree::Remove( int x )
+ {
+	 Node *torem = Find(x);
+	 if (!torem)
+		 return false;
+
+	 Node *p = torem->par;
+	 bool isleft;
+	 if (p)
+		 if ((p->l) == torem)
+			 isleft = true;
+		 else
+			 isleft = false;
+
+	 Node *repl;
+	 if ((!torem->l) && (!torem->r))
+		 repl = (Node*)0;
+	 else
+		 if (!torem->l)
+			 repl = torem->r;
+		 else
+			 if (!torem->r)
+				 repl = torem->l;
+
+	 if (!(torem->l && torem->r))
+	 {
+		 if (p)
+		 {
+			 if (isleft)
+				 p->l = repl;
+			 else
+				 p->r = repl;
+			delete torem;
+			p->update();
+			balance(p);
+		 }
+		 else
+		 {
+			 this->root = repl;
+			 delete torem;
+		 }
+	 }
+	 else
+	 {
+		 int bal = count_balance(torem);
+		 Node *tmp;
+		 if (bal > 0)
+		 {
+			 if (!torem->l->r)
+			 {
+				repl = torem->l;
+				repl->r = torem->r;
+				tmp = repl;
+			 }
+			 else
+			 {
+				 repl = torem->l->r;
+				 while (repl->r)
+					 repl = repl -> r;
+			 
+				Node *repl_par = repl->par;
+				repl_par->r = repl->l;
+
+				tmp = repl_par;
+				repl->l = torem->l;
+				repl->r = torem->r;
+			 }
+		 }
+		 else
+		 {
+			 if (!torem->r->l)
+			 {
+				 repl = torem->r;
+				 repl->l = torem->l;
+				 tmp = repl;
+			 }
+			 else
+			 {
+				 repl = torem->r->l;
+				 while (repl->l)
+					 repl = repl -> l;
+			 
+				Node *repl_par = repl->par;
+				repl_par->l = repl->r;
+
+				tmp = repl_par;
+				repl->r = torem->r;
+				repl->l = torem->l;
+			 }
+		 }
+
+		 if (p)
+		 {
+			 if (isleft)
+				 p->l = repl;
+			 else
+				 p->r = repl;
+			 delete torem;
+		 }
+		 else
+		 {
+			 root = repl;
+			 delete torem;
+		 }
+		 balance(tmp);
+	 }
+ }
+
 int main()
 {
 	freopen("input.txt", "r", stdin);
@@ -211,8 +329,8 @@ int main()
 	int n, x;
 	cin >> n;
 	cin >> x;
-	Tree<int> tr(x);
-	for(int i = 1; i < n; i++)
+	Tree tr(x);
+	for(int i = 1; i <  n; i++)
 	{
 		cin >> x;
 		if (!tr.Find(x))
