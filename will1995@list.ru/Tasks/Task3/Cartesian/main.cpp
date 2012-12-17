@@ -25,7 +25,7 @@ public:
 
 		void update()
 		{
-			if (this)
+			//if (this)
 			{
 				this->size = 1;
 				if (l) 
@@ -135,7 +135,7 @@ typename Treap<T>::Node* Treap<T>::Find( T x, typename Node* t )
 template <class T>
 typename Treap<T>::Node* Treap<T>::Next( T x )
 {
-	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
+	Node *tmp;// = new Node(0, 0, NULL, NULL, NULL);
 	tmp = Find( x, root );
 	if (tmp)
 	{
@@ -163,7 +163,7 @@ typename Treap<T>::Node* Treap<T>::Next( T x )
 template <class T>
 typename Treap<T>::Node* Treap<T>::Prev( T x )
 {
-	Node *tmp = new Node(0, 0, NULL, NULL, NULL);
+	Node *tmp;// = new Node(0, 0, NULL, NULL, NULL);
 	tmp = Find( x, root );
 	if (tmp)
 	{
@@ -204,27 +204,37 @@ void Treap<T>::Add( T x )
 
 	if (!tmp)
 	{
-		Node* l = new Node(0, 0, NULL, NULL, NULL);
-		Node* r = new Node(0, 0, NULL, NULL, NULL);
-		Node* nw = new Node(0, 0, NULL, NULL, NULL);
+		Node* l;// = new Node(0, 0, NULL, NULL, NULL);
+		Node* r;// = new Node(0, 0, NULL, NULL, NULL);
+		Node* nw;// = new Node(0, 0, NULL, NULL, NULL);
 
 		split(x, root, l, r);
-		root->update();
-		l->update();
-		r->update();
+		if (root)
+			root->update();
+
+		if (l)
+			l->update();
+
+		if (r)
+			r->update();
 
 		split(x + 1, r, nw, r);
-		r->update();
-		nw->update();
+		if (r)
+			r->update();
+
+		if (nw)
+			nw->update();
 
 		if (!nw)
 		{
-			nw = new Node(x, nk, NULL, NULL, NULL);
+			nw;// = new Node(x, nk, NULL, NULL, NULL);
 		}
 		nw = merge(l, nw);
-		nw->update();
+		if (nw)
+			nw->update();
 		root = merge(nw, r);
-		root->update();
+		if (root)
+			root->update();
 	}
 }
 
@@ -263,7 +273,7 @@ int main()
 	}
 
 
-	Treap<int>::Node* nx = new Treap<int>::Node(0, 0, NULL, NULL, NULL);
+	Treap<int>::Node* nx;// = new Treap<int>::Node(0, 0, NULL, NULL, NULL);
 	nx = tr.Prev(1);
 	if (nx)
 		cout << nx->data << endl;
