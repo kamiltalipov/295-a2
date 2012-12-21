@@ -341,5 +341,9 @@ int main()
 		}
 	}
 
+
+	tr.Remove(100);
+	tr.Remove(3);
+	tr.Remove(1);
 	return 0;
 }
