@@ -206,6 +206,7 @@ public:
 		}
 		if (x < key) {
 			right_root = this;
+			get_p(right_root) = 0;
 			treap_node<T>* new_left;
 			static_cast<treap_node<T>*>(left)->split(x,left_root,new_left);
 			left = new_left;
@@ -213,6 +214,7 @@ public:
 		}
 		else {
 			left_root = this;
+			get_p(left_root) = 0;
 			treap_node<T>* new_right;
 			static_cast<treap_node<T>*>(right)->split(x,new_right,right_root);
 			right = new_right;
@@ -276,6 +278,7 @@ void check()
 	root = root->insert(20);
 	root = root->insert(17);
 	root = root->insert(2);
+	root = root->insert(15);
 	for (treap_node<int>* x = root->find(20); x; x = x->prev())
 		cout << x->value() /*<< ' ' << x->y*/ << '\n';
 	for (int i = 0; i < 11; ++i) cout << root->nth_element(i)->get_key() << ' ';
