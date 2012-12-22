@@ -169,6 +169,11 @@ template<class T> class treap_node : public BST_node<T>
 
 public:
 	treap_node(const T& value) : BST_node(value), y(rand()<<15|rand()), size(1) {}
+	~treap_node()
+	{
+		delete static_cast<treap_node<T>*>(left);
+		delete static_cast<treap_node<T>*>(right);
+	}
 	const treap_node<T>* find(const T& value) const { return static_cast<const treap_node<T>*>(BST_node::find(value)); }
 	treap_node<T>* find(const T& value) { return static_cast<treap_node<T>*>(BST_node::find(value)); }
 	static treap_node<T>* merge(treap_node<T>* left, treap_node<T>* right)
@@ -235,7 +240,8 @@ public:
 				x = get_left(x);
 		treap_node<T>* left_root, *middle_root, *right_root1, *right_root;
 		split(split_key,left_root,right_root1);
-		right_root1->split(to_delete,middle_root,right_root);	// Память.
+		right_root1->split(to_delete,middle_root,right_root);
+		delete middle_root;
 		return merge(left_root,right_root);
 	}
 	const treap_node<T>* next() const { return static_cast<const treap_node<T>*>(BST_node::next()); }
@@ -256,7 +262,7 @@ public:
 	T get_key()	{ return key; }
 };
 
-int main()
+void check()
 {
 	treap_node<int>* root = 0;
 	root = root->insert(15);
@@ -287,5 +293,11 @@ int main()
 	root = root->erase(4);
 	root = root->erase(20);
 	root = root->erase(17);
+}
+
+int main()
+{
+	check();
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
