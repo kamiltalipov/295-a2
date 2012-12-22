@@ -231,17 +231,22 @@ public:
 	}
 	treap_node<T>* erase(const T& to_delete)
 	{
-		BST_node<T>* x = this;
-		T split_key;
-		while(x)
-			if (BST_node::get_key(x) < to_delete) {
-				split_key = max(split_key,BST_node::get_key(x));
-				x = get_right(x);
-			}
-			else
-				x = get_left(x);
-		treap_node<T>* left_root, *middle_root, *right_root1, *right_root;
-		split(split_key,left_root,right_root1);
+		BST_node<T>* x;
+		for (x = this; get_left(x); x = get_left(x));
+		if (to_delete < BST_node::get_key(x)) return this;
+		treap_node<T>* left_root = 0, *middle_root, *right_root1 = this, *right_root;
+		if (BST_node::get_key(x) < to_delete) {
+			T split_key = BST_node::get_key(x);
+			x = this;
+			while(x)
+				if (BST_node::get_key(x) < to_delete) {
+					split_key = max(split_key,BST_node::get_key(x));
+					x = get_right(x);
+				}
+				else
+					x = get_left(x);
+			split(split_key,left_root,right_root1);
+		}
 		right_root1->split(to_delete,middle_root,right_root);
 		delete middle_root;
 		return merge(left_root,right_root);
