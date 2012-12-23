@@ -45,55 +45,47 @@ void recalc(ptreap &p)
 	else
 		return;
 }
-void split(int x,ptreap current, ptreap &L, ptreap &R)
+
+void split(int key, ptreap current, ptreap& left, ptreap& right)
 {
-	if (current == NULL)
-    {
-                L = R = NULL;
+        if (current == NULL)
+        {
+                left = right = NULL;
                 return void();
-    }
-    ptreap newTree = NULL;
-    if (current->key <= x)
-    {
-        if (current->right == NULL)
-            R = NULL;
+        }
+        if (key < current->key)
+		{
+			split(key, current->left, left, current->left);
+			recalc(current);
+			right = current;
+		}
         else
-            split(x,current->right, newTree, R);
-        L = new treap(current->key, current->priority, current->left, newTree);
-        recalc(L);
-    }
-    else
-    {
-        if (current->left == NULL)
-            L = NULL;
-        else
-            split(x,current->left,  L, newTree);
-        R = new treap(current->key, current->priority, newTree, current->right);
-        recalc(R);
-    }
+		{
+			split(key, current->right, current->right, right);
+			recalc(current);
+			left = current;
+		}
 }
 
-ptreap merge(ptreap L, ptreap R)
+ptreap merge(ptreap left, ptreap right)
 {
-    if (L == NULL) return R;
-    if (R == NULL) return L;
-
-    ptreap answer;
-    if (L->priority > R->priority)
-    {
-        ptreap newR = merge(L->right, R);
-        answer = new treap(L->key, L->priority, L->left, newR);
-    }
-    else
-    {
-        ptreap newL = merge(L, R->left);
-        answer = new treap(R->key, R->priority, newL, R->right);
-    }
-
-    recalc(answer); // пересчЄт!
-    return answer;
+        if (left == NULL)
+                return right;
+        if (right == NULL)
+                return left;
+        if (left->priority < right->priority)
+        {
+                left->right = merge(left->right, right);
+				recalc(left);
+                return left;
+        }
+        else
+        {
+                right->left = merge(left, right->left);
+				recalc(right);
+                return right;
+        }
 }
-
 
 
 void insert(ptreap neo,ptreap &root)
@@ -110,7 +102,7 @@ void insert(ptreap neo,ptreap &root)
  
 int next(int i,ptreap &root)
 {
-        ptreap left, right;
+        ptreap left=NULL, right=NULL;
         int result = 0;
        
         split(i, root, left, right);
@@ -159,7 +151,8 @@ int main()
 	{
 		cin>>q;    //q==1 - добавить элемент в дерево
 				   //q==2 - вывести  -й элемент( -ю пор€дковую статистику)
-				   //q==0 - вывести все дерево в отсортированном пор€дке
+				   //q==3 - вывести все дерево в отсортированном пор€дке
+				   //q==0 - вывести элемент, следующий за данным
 
 		if(q==1)
 		{
@@ -172,8 +165,14 @@ int main()
 			cin>>k;
 			cout<<KthElement(root,k)<<endl;
 		}
-		else
+		else if(q==3)
 			for(int i=1;i<=root->size;i++) cout<<KthElement(root,i)<<' ';
+		else
+		{
+			cin>>a;
+			cout<<next(a,root);
+		}
+		
 	}
 	//cin>>m;
 	return 0;
