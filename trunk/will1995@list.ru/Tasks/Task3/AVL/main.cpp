@@ -315,6 +315,7 @@ Tree::Node* Tree::Find (  int x )
 		 else
 		 {
 			 root = repl;
+			 root->par = (Node*)0;
 			 delete torem;
 		 }
 		 balance(tmp);
