@@ -13,6 +13,7 @@ public:
 	{
 		Vert.resize(size);
 		used.resize(size);
+		used.assign(size, 0);
 	}
 
 	void Non_rec_DFS(int start);
@@ -39,12 +40,15 @@ void Graph::Non_rec_DFS(int start)
 	{
 		int tmp = q.back();
 		q.pop();
-
+		used[tmp] = 1;
 		
 		for(list <int>::iterator i = Vert[tmp].begin(); i != Vert[tmp].end(); i++)
 		{
-			cout << tmp << ':' << *i << '\n';
-			q.push(*i);
+			if (!used[*i])
+			{
+				cout << tmp << ':' << *i << '\n';
+				q.push(*i);
+			}
 		}
 	}
 }
@@ -54,16 +58,17 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, v, u;
-	cin >> n;
+	int n, m, v, u;
+	cin >> n >> m;
 
 	Graph gr(n);
 
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < m; i++)
 	{
 		cin >> v >> u;
 		gr.Add(v, u);
 	}
+	gr.Non_rec_DFS(1);
 
 	fclose(stdin);
 	fclose(stdout);
