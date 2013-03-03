@@ -2,7 +2,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -12,8 +12,8 @@ public:
 	Graph(int size): size(size)
 	{
 		Vert.resize(size);
-		used.resize(size);
-		used.assign(size, 0);
+		color.resize(size);
+		color.assign(size, 0);
 	}
 
 	void Non_rec_DFS(int start);
@@ -21,36 +21,35 @@ public:
 
 //private:
 	vector < list <int> > Vert; 
-	vector <bool> used;
+	vector <bool> color;
 	int size;
 };
 
 void Graph::Add(int v, int u)
 {
 	Vert[v].push_back(u);
-	Vert[u].push_back(v);
 }
 
 void Graph::Non_rec_DFS(int start)
 {
-	queue <int> q;
+	stack <int> q;
 	q.push(start);
 
+	int count = 0;
 	while (!q.empty())
 	{
-		int tmp = q.back();
+		int tmp = q.top();
 		q.pop();
-		used[tmp] = 1;
-		
-		for(list <int>::iterator i = Vert[tmp].begin(); i != Vert[tmp].end(); i++)
+		if (color[tmp] == 0)
 		{
-			if (!used[*i])
-			{
-				cout << tmp << ':' << *i << '\n';
+			color[tmp] = 1;
+			count++;
+		
+			for(list <int>::iterator i = Vert[tmp].begin(); i != Vert[tmp].end(); i++)
 				q.push(*i);
-			}
 		}
 	}
+	cout << count;
 }
 
 int main()
@@ -58,17 +57,21 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, m, v, u;
+	int n, m, x;
 	cin >> n >> m;
 
 	Graph gr(n);
 
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < n; i++)
 	{
-		cin >> v >> u;
-		gr.Add(v, u);
+		for (int j = 0; j < n; j++)
+		{
+			cin >> x;
+			if (x == 1)
+				gr.Add(i, j);
+		}
 	}
-	gr.Non_rec_DFS(1);
+	gr.Non_rec_DFS(m - 1);
 
 	fclose(stdin);
 	fclose(stdout);
