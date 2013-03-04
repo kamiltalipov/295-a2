@@ -44,7 +44,7 @@ int func(map <string, int> &m, string &s)
 
 void reverse(list <int> &a)
 {
-	for(list<int>::iterator l=a.begin(), list<int>::iterator r=a.end(); l!=r &&l!=--r; ++l)
+	for(list<int>::iterator l=a.begin(), r=a.end(); l!=r&&l!=--r; ++l)
 		swap(*l, *r);
 }
 
