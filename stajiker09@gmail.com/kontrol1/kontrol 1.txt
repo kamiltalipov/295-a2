@@ -50,4 +50,5 @@ void reverse(list <int> &a)
 
 7.
 
-...
+	map<string, BadCopy> m;
+	m["abcd"].SetValue(5);
