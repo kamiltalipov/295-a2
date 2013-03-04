@@ -1,10 +1,16 @@
 1. насчет set<int>::begin(), скорее всего ассимптотика O(1) - если хранить для каждого сета указатель на наименьший эллемент, но, если он написан без запоминания, то ассимптотика может достигать O(logN). Оператор ++ выполняется в худшем случае за 2 прохода на всю глубину дерева, то есть за O(logN).
 
 2.
-map < T1, T2 >::iterator it = mp_name.find(key_name);
-if (it == mp_name.end())
-	//Ключа не было
-mp_name[key_name] = value;
+map < T1, T2 >::iterator it = mp_name.lower_bound(key_name);
+if (it != mp_name.end())
+{
+	if (it->first == key_name)
+		it->second = value;
+	else
+		mp_name.insert(it, value);
+}
+else
+	mp_name.insert(--mp_name.end(), value);
 
 3. set < T, std::greater < T > > set_name;
 
@@ -14,4 +20,4 @@ mp_name[key_name] = value;
 
 6. list1.splice(list1.end(), list2);
 
-7. map_name["abcd"] = BadCopy(5);
+7. map_name["abcd"].SetValue(5);
