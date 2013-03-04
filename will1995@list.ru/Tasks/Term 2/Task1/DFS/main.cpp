@@ -57,20 +57,18 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, m, v, u;
-	cin >> n >> m;
+	int n, m, v, u, s;
+	cin >> n >> m >> s;
 
 	Graph gr(n);
 
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < m; i++)
 	{
-		for (int j = 0; j < n; j++)
-		{
-			cin >> v >> u;
-			gr.Add(v, u);
-		}
+		cin >> v >> u;
+		gr.Add(v, u);
+
 	}
-	gr.Non_rec_DFS(m - 1);
+	gr.Non_rec_DFS(s - 1);
 
 	fclose(stdin);
 	fclose(stdout);
