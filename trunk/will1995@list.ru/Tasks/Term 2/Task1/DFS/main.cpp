@@ -57,7 +57,7 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 
-	int n, m, x;
+	int n, m, v, u;
 	cin >> n >> m;
 
 	Graph gr(n);
@@ -66,9 +66,8 @@ int main()
 	{
 		for (int j = 0; j < n; j++)
 		{
-			cin >> x;
-			if (x == 1)
-				gr.Add(i, j);
+			cin >> v >> u;
+			gr.Add(v, u);
 		}
 	}
 	gr.Non_rec_DFS(m - 1);
