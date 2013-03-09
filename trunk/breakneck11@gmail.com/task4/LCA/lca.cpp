@@ -65,7 +65,12 @@ int main()
 		}
 	}
 	dfs(0);
-	for (
-	system("pause");
+	map < pair < int, int >, int >::iterator it;
+	for (int i = 0; i < qs.size(); ++i)
+	{
+		it = ans.find(qs[i]);
+		cout << (it != ans.end() ? it->second : ans[ make_pair(qs[i].second, qs[i].first) ]) + 1 << endl;
+	}
+	//system("pause");
 	return 0;
 }
