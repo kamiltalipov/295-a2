@@ -53,7 +53,7 @@ void Dijkstra( const vector<vector<Edge>>& graph, int startVertex, vector<BestPa
 		const BestPathTreeNode& node = queue.ExtractMin();
 		for( int i = 0; i < graph[node.Vertex].size(); i++ ) {
 			int toVertex = graph[node.Vertex][i].EndVertex;
-			if( queue.Has( toVertex ) ) {
+			if( !queue.Has( toVertex ) ) {
 				queue.AddNewVertex( toVertex, node.Length + graph[node.Vertex][i].Cost );
 			} else {
 				int estimatedCost = node.Length + graph[node.Vertex][i].Cost;
