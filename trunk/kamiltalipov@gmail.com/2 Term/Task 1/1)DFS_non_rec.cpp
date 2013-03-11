@@ -5,6 +5,9 @@ using std :: cout;
 using std :: vector;
 #include <stack>
 using std :: stack;
+#include <utility>
+using std :: pair;
+using std :: make_pair;
 
 enum Color
 {
@@ -18,28 +21,34 @@ int dfs (size_t start_v, const vector<vector<size_t> >& g,
 		  vector<size_t>& order)
 {
     if (colors[start_v] != WHITE)
-        return;
+        return -1;
 
-    stack<size_t> st;
-    st.push (start_v);
+    stack<pair<size_t, unsigned int> > st;
+    st.push (make_pair (start_v, 0));
     while (!st.empty ())
     {
-        size_t v = st.top ();
-        if (colors[v] == GRAY)
+        pair<size_t, unsigned int>& top = st.top ();
+        colors[top.first] = GRAY;
+		bool need_remove = true;
+        if (top.second < g[top.first].size ())
         {
-			order.push_back (v);
-            colors[v] = BLACK;
-            st.pop ();
-            continue;
-        }
-        colors[v] = GRAY;
-        for (vector<size_t> :: const_iterator i = g[v].begin (); i != g[v].end (); ++i)
-            if (colors[*i] == WHITE)
-                st.push (*i);
-			else if (colors[*i] == GRAY)
+            if (colors[g[top.first][top.second]] == WHITE)
+            {
+				need_remove = false;
+                st.push (make_pair (g[top.first][top.second], 0));
+                ++top.second;
+            }
+			else if (colors[g[top.first][top.second]] == GRAY) //have cycle
 			{
 				return -1;
 			}
+        }
+        if (need_remove)
+        {
+            colors[top.first] = BLACK;
+            order.push_back (top.first);
+            st.pop ();
+        }
     }
 
 	return 0;
@@ -71,7 +80,7 @@ int main ()
         for (size_t i = 0; i < v_v; ++i)
             cin >> g[v][i];
     }
-	
+    
 	vector<size_t> order;
 	topsort (g, order);
     if (order.empty ())
@@ -79,6 +88,9 @@ int main ()
 	else
 		for (size_t i = 0; i < order.size (); ++i)
 			cout << order[i] << ' ';
-	
+
+	cin.get ();
+	cin.get ();
+
     return 0;
 }
