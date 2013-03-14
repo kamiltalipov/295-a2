@@ -22,7 +22,7 @@ public:
 	Graph();
 
 	void DFS(int vertex);
-	void Union(int &v, int &u);
+	void Union(int v, int u);
 	int Get(int v);
 	void Add (int v, int u);
 
@@ -40,7 +40,7 @@ int Graph::Get(int v)
 	return Rep[v] = Get(Rep[v]);
 }
 
-void Graph::Union(int &v, int &u)
+void Graph::Union(int v, int u)
 {
 	v = Get(v);
 	u = Get(u);
