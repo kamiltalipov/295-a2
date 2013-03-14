@@ -8,7 +8,7 @@ using std :: map;
 #include <utility>
 using std :: pair;
 using std :: make_pair;
-#include <cstdio>
+//#include <cstdio>
 
 #include "DSU.h"
 
@@ -57,7 +57,7 @@ void getLCA (const vector<vector<size_t> >& g, const vector<vector<size_t> >& qu
 
 int main ()
 {
-    freopen ("input.txt", "r", stdin);
+    //freopen ("input.txt", "r", stdin);
 
     size_t all_v = 0;
     cin >> all_v;
