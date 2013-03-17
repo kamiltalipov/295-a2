@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "bridges_and_cutpoints::biconnected_edged_components(graph::Graph const&amp;):Bridges_and_cutpoints.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "problem_2():main.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "bridges_and_cutpoints::dfs_bridges(long, long):Bridges_and_cutpoints.cpp">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
