@@ -57,7 +57,7 @@ void findEulerLoop (const vector<vector<size_t> >& g, vector<size_t>& loop)
     size_t all_edge = 0;
     for (size_t v = 0; v < g.size (); ++v)
         all_edge += g[v].size ();
-    if (loop.size () != all_edge)
+    if (loop.size () - 1 != all_edge)
         loop.clear ();
 }
 
