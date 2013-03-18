@@ -78,7 +78,11 @@ void Graph::DFS(int v, vector < vector <int> > &quiery)
 
 	for (int i = 0; i < quiery[v].size(); i++)
 		if (Used[quiery[v][i]])
+		{
 			cout << v <<"'s and " << quiery[v][i] << "'s LCA is " << Anc[Dsu[Get(quiery[v][i])]] << endl;
+			//Used[quiery[v][i]] = 1;
+			//Used[v] = 1;
+		}
 }
 
 int main()
