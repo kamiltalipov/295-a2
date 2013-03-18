@@ -170,15 +170,13 @@ class Graph
     }
 
 
-    void visit_loop(int v, int &cnt, vector<int> &current, vector<int> &loop)
+    void visit_loop(int v, vector<int> &current, vector<int> &loop)
     {
-        if (current[v] == 0)
-            cnt++;
         while (current[v] < graph[v].size())
         {
             int u = graph[v][current[v]].to;
             current[v]++;
-            visit_loop(u, cnt, current, loop);
+            visit_loop(u, current, loop);
         }
         loop.push_back(v);
     }
@@ -266,9 +264,14 @@ public:
     void eulerian_loop(vector<int> &loop)
     {
         vector<int> deg_in(graph.size(), 0), deg_out(graph.size(), 0);
+		int v = 0;
+		int cnt = 0;
         for (int i = 0; i < graph.size(); i++)
         {
             deg_out[i] = graph[i].size();
+			cnt += deg_out[i];
+			if (deg_out[i] != 0)
+				v = i;
             for (int j = 0; j < graph[i].size(); j++)
             {
                 deg_in[graph[i][j].to]++;
@@ -281,9 +284,8 @@ public:
                 return;
             }
         vector<int> current(graph.size(), 0);
-        int cnt = 0;
-        visit_loop(0, cnt, current, loop);
-        if (cnt != graph.size())
+        visit_loop(v, current, loop);
+        if (cnt != loop.size() - 1)
         {
             cout << "No loop";
             loop.clear();
