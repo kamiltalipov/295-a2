@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include <list>
+#include <algorithm>
 #include <vector>
 #include <stack>
 
@@ -16,12 +16,12 @@ public:
 		color.assign(size, 0);
 	}
 
-	void Non_rec_DFS(int start);
+	bool Non_rec_DFS(vector <int> &topsort);
 	void Add (int v, int u);
 
 //private:
-	vector < list <int> > Vert; 
-	vector <bool> color;
+	vector < vector <int> > Vert; 
+	vector <char> color;
 	int size;
 };
 
@@ -30,26 +30,43 @@ void Graph::Add(int v, int u)
 	Vert[v].push_back(u);
 }
 
-void Graph::Non_rec_DFS(int start)
+bool Graph::Non_rec_DFS(vector <int> &topsort)
 {
-	stack <int> q;
-	q.push(start);
+	stack < pair <int, int> > q;
+	topsort.clear();
 
-	int count = 0;
-	while (!q.empty())
-	{
-		int tmp = q.top();
-		q.pop();
-		if (color[tmp] == 0)
+	for (int i = 0; i < Vert.size(); i++)
+		if (color[i] == 0)
 		{
-			color[tmp] = 1;
-			count++;
-		
-			for(list <int>::iterator i = Vert[tmp].begin(); i != Vert[tmp].end(); i++)
-				q.push(*i);
+			q.push(make_pair(i, 0));
+			while (!q.empty())
+			{
+				pair <int, int> &tmp = q.top();
+				color[tmp.first] = 1;  
+				if (tmp.second < Vert[tmp.first].size())
+				{
+					if (color[Vert[tmp.first][tmp.second]] == 1)
+					{
+						return false;
+					}
+					else
+						if (color[Vert[tmp.first][tmp.second]] == 0)
+							q.push(make_pair(Vert[tmp.first][tmp.second++], 0));
+						else
+							tmp.second++;
+				}
+				else
+					if (tmp.second == Vert[tmp.first].size())
+					{
+						color[tmp.first] = 2;
+						topsort.push_back(tmp.first);
+						q.pop();
+					}
+			}
 		}
-	}
-	cout << count;
+
+	reverse(topsort.begin(), topsort.end());
+	return true;
 }
 
 int main()
@@ -58,17 +75,25 @@ int main()
 	freopen("output.txt", "w", stdout);
 
 	int n, m, v, u, s;
-	cin >> n >> m >> s;
+	cin >> n >> m;
 
 	Graph gr(n);
+	vector <int> topsort;
 
 	for (int i = 0; i < m; i++)
 	{
 		cin >> v >> u;
-		gr.Add(v, u);
+		gr.Add(v - 1, u - 1);
 
 	}
-	gr.Non_rec_DFS(s - 1);
+	if (gr.Non_rec_DFS(topsort))
+	{
+		cout << "Yes" << endl;
+		for (int i = 0; i < topsort.size(); i++)
+			cout << topsort[i] + 1 << " ";
+	}
+	else
+		cout << "No" << endl;
 
 	fclose(stdin);
 	fclose(stdout);
