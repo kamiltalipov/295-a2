@@ -9,9 +9,9 @@ int main()
 	vector <int> array(n), elements(n+1), last(n+1), parents(n);
 	for(int i=0; i<n; ++i)
 		cin>>array[i];
-	elements[0]=-1<<31;
+	elements[0]=numeric_limits<int>::min();
 	for(int i=1; i<=n; ++i)
-		elements[i]=(1<<31)-1;
+		elements[i]=numeric_limits<int>::max();
 	parents[0]=-1;
 	for(int i=0; i<n; ++i)
 	{
