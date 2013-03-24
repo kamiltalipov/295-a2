@@ -97,13 +97,17 @@ bool Graph::SameComponent(int v, int u)
 
 int main()
 {
-	int n, m, a, b;
+	int n, m, a, b, t;
 	cin >> n >> m;
 	Graph g(n);
 	for (int i = 0; i < m; i++)
 	{
-		cin >> a >> b;
-		g.AddEdge(Graph::Edge(a, b));
+		cin >> t >> a >> b;
+		if (t == 0)
+			g.AddEdge(Graph::Edge(a, b));
+		else
+			cout << g.SameComponent(a, b) ? 1 : 0;
 	}
+
 	return 0;
 }
