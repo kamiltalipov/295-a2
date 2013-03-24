@@ -22,7 +22,7 @@ public:
         tin.assign(size, 0);
 		
         edge_comp.resize(size);
-        edge_comp.assign(size, 0);
+        edge_comp.assign(size, -1);
  
         fup.resize(size);
         fup.assign(size, 1000000);
@@ -31,8 +31,9 @@ public:
     Graph();
  
     void DFS(int vertex, int parent);
-	void DFS2 (int vertex, int color, int parent);
+	void DFS2 (int vertex, int &color, int parent);
     void Add (int vertex, int another_vertex);
+	void Paint (int v, int &color);
  
 //private:
     vector < vector < pair < int, int > > > Vert;
@@ -41,8 +42,7 @@ public:
     vector < int > tin;
     vector < int > fup;
 	vector < int > points;
-	vector < pair <int, int> > bridges;
-	vector < int > vert_comp;
+	vector < pair < int, int > > bridges;
 	vector < int > edge_comp;
     int size;
     int time;
@@ -53,7 +53,25 @@ void Graph::Add(int v, int u)
     Vert[v].push_back(make_pair(u, -1));
 }
  
-void Graph::DFS2(int v, int c, int p)
+
+void Graph::Paint(int v, int &c)
+{
+	edge_comp[v] = c;
+	for (int i = 0; i < Vert[v].size(); i++)
+	{
+		int tmp = Vert[v][i].first;
+		if (edge_comp[tmp] == -1)
+			if (fup[tmp] == tin[tmp])
+			{
+				c++;
+				Paint(tmp, c);
+			}
+			else
+				Paint(tmp, c);
+	}
+}
+
+void Graph::DFS2(int v, int &c, int p)
 {
 	Used[v] = true;
 	for (int i = 0; i < Vert[v].size(); i++)
@@ -61,7 +79,7 @@ void Graph::DFS2(int v, int c, int p)
 		int tmp = Vert[v][i].first;
 		if (tmp == p)
 			continue;
-		if (!Used[i])
+		if (!Used[tmp])
 			if (fup[tmp] >= tin[v])
 			{
 				int c2 = c + 1;
@@ -74,7 +92,7 @@ void Graph::DFS2(int v, int c, int p)
 				DFS2(tmp, c, v);
 			}
 		else
-			if (tin[tmp] <= tin[v])
+			if ((tin[tmp] <= tin[v]) && (Vert[v][i].second == -1))
 				Vert[v][i].second = c;
 	}
 }
@@ -141,17 +159,39 @@ int main()
 
 	for (int i = 0; i < gr.points.size(); i++)
 		cout << gr.points[i] << " ";
-	cout << endl;
+	cout << endl << endl;
 
 	for (int i = 0; i < gr.bridges.size(); i++)
 		cout << gr.bridges[i].first << '-' << gr.bridges[i].second << endl;
 
+	cout << endl;
+	int c = 0;
     for (int i = 0; i < n; i++)
 	{
 		if (!gr.Used[i])
-			gr.DFS2(i, 0, -1);
+			gr.DFS2(i, c, -1);
 	}
 
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < gr.Vert[i].size(); j++)
+			if (gr.Vert[i][j].second != -1)
+				cout << i << '-' << gr.Vert[i][j].first << ' ' << gr.Vert[i][j].second << endl;
+	}
+
+	cout << endl;
+	c = 0;
+    for (int i = 0; i < n; i++)
+	{
+		if (gr.edge_comp[i] == -1)
+			gr.Paint(i, c);
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		cout << i << " - " << gr.edge_comp[i] << endl;
+	}
+	cout << endl;
     fclose(stdin);
     fclose(stdout);
     return 0;
