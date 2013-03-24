@@ -42,6 +42,7 @@ class LCA
 {
 public:
 	LCA(Graph &graph, vector<vector<int>> &queries);
+	void PrintAnswers();
 private:
 	enum colors {WHITE, GRAY, BLACK};
 	void DFS(int vertex);
@@ -113,6 +114,18 @@ LCA::LCA(Graph &graph, vector<vector<int>> &queries):graph(graph), queries(queri
 	DFS(0);
 }
 
+void LCA::PrintAnswers()
+{
+	for (int i = 0; i < queries.size(); ++i)
+	{
+		for (int j = 0; j < queries[i].size(); ++j)
+		if (i <= queries[i][j])
+		{
+			cout << i << " " << queries[i][j] << " -> " << answers[i][j] << endl;
+		}
+	}
+}
+
 void LCA::DFS(int vertex)
 {
 	color[vertex] = GRAY;
@@ -139,19 +152,20 @@ int main()
 	vector<vector<int>> queries;
 	cin >> n;
 	Graph g(n);
-	for (int i = 0; i < n - 1; i++)
+	for (int i = 0; i < n - 1; ++i)
 	{
 		cin >> a >> b;
 		g.AddEdge(Graph::Edge(a, b));
 	}
 	cin >> m;
 	queries.resize(n);
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < m; ++i)
 	{
 		cin >> a >> b;
 		queries[a].push_back(b);
 		queries[b].push_back(a);
 	}
-	LCA L(g, queries); 
+	LCA L(g, queries);
+	L.PrintAnswers();
 	return 0;
 }

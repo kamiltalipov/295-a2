@@ -99,7 +99,7 @@ int main()
 	}
 
 	GraphAlgorithms GA(g);
-	vector<int> v = GA.EulerianCycle();
+	vector<int>& v = GA.EulerianCycle();
 	if (!v.empty())
 	{
 		for (auto it = v.begin(); it != v.end(); ++it)
