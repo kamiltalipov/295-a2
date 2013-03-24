@@ -1,0 +1,54 @@
+1. size*log(size), it++ работает в худшем за log(size)
+
+2.
+
+	set <T> s;
+	T key;
+	if(s.find(key)!=s.end())
+		cout<<"true";
+	else
+	{
+		s.insert(key);
+		cout<<"false";
+	}
+
+3.
+
+int func(map <string, int> &m, string &s)
+{
+	map <string, int> :: iterator q = m.find(s);
+	if(q!=m.end())
+		return q->second;
+	return -1;
+}
+
+4.
+
+	vector <int> v(5);
+	stack <int, vector<int> > s(v);
+
+5.
+
+	string s;
+	int n;
+	for(int i=n-1; i<s.size(); i+=n)
+		s[i]='a';
+
+
+6.
+
+	list <int> l;
+	l.reverse();
+
+	или
+
+void reverse(list <int> &a)
+{
+	for(list<int>::iterator l=a.begin(), r=a.end(); l!=r&&l!=--r; ++l)
+		swap(*l, *r);
+}
+
+7.
+
+	map<string, BadCopy> m;
+	m["abcd"].SetValue(5);
