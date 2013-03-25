@@ -13,18 +13,17 @@ int main(){
 		cin>>v1>>v2;
 		g[v1-1].push_back(v2-1);
 	}
-	int dfs_timer = 0; // "таймер" для определения времён
 	vector<int> color (n,0); // цвет вершины 
 	stack < pair<int,int> > s;
-	vector < pair<int,int> > ans;
+	vector <int> ans;
 	for(int v=0;v<n;v++){
 		if(!color[v])
 			s.push(make_pair(v,0));
 		while(!s.empty()){
-			dfs_timer++;
 			int x=s.top().first;
-			color[x] = 1;
 			int i=s.top().second;
+			if(i==0)
+				color[x] = 1;
 			for(;i<g[x].size();i++){
 				if(color[g[x][i]]==0){
 					s.pop();
@@ -40,13 +39,12 @@ int main(){
 			}
 			if(i == g[x].size()){
 				color[x]=2;
-				ans.push_back(make_pair (dfs_timer,s.top().first));
+				ans.push_back(s.top().first);
 				s.pop();
 			}
 		}
 	}
-	sort(ans.begin(),ans.end());
 	for(int i=ans.size()-1;i>=0;i--)
-		cout<<ans[i].second + 1<<" ";
+		cout<<ans[i] + 1<<" ";
 	return 0;
 }
