@@ -107,7 +107,7 @@ int main()
 	{
 		int v, u;
 		cin >> v >> u;
-		quiery[v].push_back(u);
+		//quiery[v].push_back(u);
 		quiery[u].push_back(v);
 	}
 	gr.DFS(0, quiery);
