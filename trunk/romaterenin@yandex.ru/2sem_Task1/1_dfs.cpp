@@ -4,6 +4,7 @@
 #include<algorithm>
 using namespace std;
 int main(){
+	//freopen("TextFile2.txt", "r", stdin);
 	int n, m; // количество вершин и ребер
 	cin>>n>>m;
 	vector < vector<int> > g(n); // граф
@@ -14,20 +15,22 @@ int main(){
 	}
 	int dfs_timer = 0; // "таймер" для определения времён
 	vector<int> color (n,0); // цвет вершины 
-	stack < int> s;
+	stack < pair<int,int> > s;
 	vector < pair<int,int> > ans;
 	for(int v=0;v<n;v++){
 		if(!color[v])
-			s.push(v);
+			s.push(make_pair(v,0));
 		while(!s.empty()){
 			dfs_timer++;
-			int x=s.top();
+			int x=s.top().first;
 			color[x] = 1;
-			int add=0;
-			for(int i=0;i<g[x].size();i++){
+			int i=s.top().second;
+			for(;i<g[x].size();i++){
 				if(color[g[x][i]]==0){
-					add++;
-					s.push(g[x][i]);
+					s.pop();
+					s.push(make_pair(x,i));
+					s.push(make_pair(g[x][i],0));
+					break;
 				}
 				else
 					if(color[g[x][i]]==1){
@@ -35,9 +38,9 @@ int main(){
 						return 0;
 					}
 			}
-			if(add==0){
+			if(i == g[x].size()){
 				color[x]=2;
-				ans.push_back(make_pair (dfs_timer,s.top()));
+				ans.push_back(make_pair (dfs_timer,s.top().first));
 				s.pop();
 			}
 		}
