@@ -8,7 +8,7 @@
 #define BLACK 2
 
 using namespace std;
-
+//DFS
 class graph{
 public:
     void ReadGraph(){
@@ -43,13 +43,10 @@ public:
             pair<int, int> CurStackElement = VertStack.top();
             int v = CurStackElement.first;
 			//cout << "Top " << v << "\n";
-            if (used[v] == BLACK){
-                VertStack.pop();
-				//cout << "Pop " << v << "\n";
-                VertTopSortReverse.push_back(v);
-            }
-			bool flag = true;
-            for (int i = CurStackElement.second; i < child[v].size(); ++i){
+            VertStack.pop();
+            int i;
+            for (i = CurStackElement.second; i < child[v].size(); ++i){
+
                 int u = child[v][i];
 				if (used[u] == GREY){
 					HaveCircle = true;
@@ -57,16 +54,22 @@ public:
                 if (used[u] == WHITE){
                     used[u] = GREY;
                     pair<int, int> StackElement;
-                    StackElement.first = u;
+                    StackElement.first = v;
                     StackElement.second = i + 1;
                     VertStack.push(StackElement);
+
+                    StackElement.first = u;
+                    StackElement.second = 0;
+                    VertStack.push(StackElement);
 					//cout << "Push " << u << "\n";
-					flag = false;
+
 					break;
                 }
             }
-			if (flag)
+			if (i == child[v].size()){
+            	VertTopSortReverse.push_back(v);
             	used[v] = BLACK;
+			}
         }
 
     }
