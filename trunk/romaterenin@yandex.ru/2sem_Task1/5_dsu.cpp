@@ -8,12 +8,16 @@ class DSU{
 public:
 	vector <int> parent;
 	vector <int> rank;
-
 	DSU(int n) {
 		parent.resize(n);
-		rank.resize(n,1);
+		rank.resize(n);
 		for(int i=0;i<n;i++)
-			parent[i]=i;
+			make_set(i);
+	}
+
+	void make_set(int v){
+		rank[v]=1;
+		parent[v]=v;
 	}
 	int root(int v){
 		if(parent[v]==v)
@@ -21,15 +25,14 @@ public:
 		return parent[v]=root(parent[v]);
 	}
 
-	void unite(int v1,int v2){
+	void unite(int v1,int v2{
 		v1=root(v1);
 		v2=root(v2);
-		if(rank[v1]>rank[v2])
+		if(v1!=v2){
+			if(rank[v1]<rank[v2])
+				swap(v1,v2);
 			parent[v2]=v1;
-		else{
-			parent[v1]=v2;
-			if(rank[v1]==rank[v2])
-				rank[v1]++;
+			rank[v1]+=v2;
 		}
 	}
 
