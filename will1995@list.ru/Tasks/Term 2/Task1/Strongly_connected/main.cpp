@@ -65,22 +65,22 @@ void Kosaraju(Graph &gr, Graph &inv)
 {
 	int n = gr.Vert.size();
 	for (int i = 0; i < n; i++)
-		{
+	{
 			if (!inv.Used[i])
 				inv.DFS1(i);
-		}
+	}
 
-		gr.comp.resize(n);
-		int c = 0;
-		for (int i = 0; i < n; i++)
+	gr.comp.resize(n);
+	int c = 0;
+	for (int i = 0; i < n; i++)
+	{
+		int tmp = inv.order[n - i - 1];
+		if (!gr.Used[tmp])
 		{
-			int tmp = inv.order[n - i - 1];
-			if (!gr.Used[tmp])
-			{
-				c++;
-				gr.DFS2(tmp, c);
-			}
+			c++;
+			gr.DFS2(tmp, c);
 		}
+	}
 
 		cout << c << endl;
 		for (int i = 0; i < n; i++)
@@ -170,6 +170,7 @@ int main()
 
 	Kosaraju(gr, inv);
 	Tarjan(gr);
+
     fclose(stdin);
     fclose(stdout);
     return 0;
