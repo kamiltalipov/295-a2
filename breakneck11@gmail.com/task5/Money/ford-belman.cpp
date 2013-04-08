@@ -90,7 +90,8 @@ int main()
 	std::vector< FordBelman::FrontElement > res;
 	vector < double > arg1 ( out.Size() );
 	bl.Calculate(res, 0, &arg1);
-	int pos = find_if(res.begin(), res.end(), [](FordBelman::FrontElement ans) { return ans.length < 0; } ) - res.begin();
+	int pos = find_if(res.begin(), res.end(),
+		[](FordBelman::FrontElement ans) { return ans.length < 0; } ) - res.begin();
 	if (pos == res.size())
 	{
 		cout << "No way." << endl;
@@ -105,7 +106,7 @@ int main()
 	} while (pos != spos);
 	ans.push_back(spos);
 	reverse(ans.begin(), ans.end());
-	for_each(ans.begin(), ans.end(), [](int a){ cout << a << " "; });
+	for_each(ans.begin(), ans.end(), [](int a){ cout << a << " "; } );
 	cout << endl;
 	return 0;
 }
