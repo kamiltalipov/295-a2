@@ -3,23 +3,26 @@
 #include <vector>
 #include <math.h>
 #include <algorithm>
+#include <ctime>
 
 using namespace std;
+
+const double eps = 1E-6;
 
 class TDSU
 {
 public:
 	void Unite ( int v, int u );
 	int Get ( int v );
-	TDSU( int size ) 
+	TDSU( int n, int m ) 
 	{
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < n * m; i++)
 		{
 			Anc.push_back(i);
 		}
 
-		Rank.resize(size);
-		Rank.assign(size, 0);
+		Rank.resize(n * m);
+		Rank.assign(n * m, 0);
 	}
 
 	TDSU();
@@ -33,15 +36,22 @@ public:
 class TGraph
 {
 public:
-	TGraph(int size): size(size) {};
+	TGraph(int n, int m): size(n * m * 2) 
+	{
+		Tree.resize(n * m);
+		Tree.assign(n * m, 0);
+		Tree_Weight = 0;
+	};
 	TGraph();
 
-	int Make_Tree ( TDSU &DSU );
-	void Add (int v, int u, int weight);
+	void Make_Tree ( TDSU &DSU );
+	void Add (int v, int u, double weight);
 
 //private:
-	vector < pair < int, pair < int, int > > > Vert; 
+	vector < pair < double, pair < int, int > > > Vert; 
+	vector < vector < pair < int, double > > > Tree;
 	int size;
+	double Tree_Weight;
 };
 
 int TDSU::Get(int v)
@@ -66,26 +76,53 @@ void TDSU::Unite(int v, int u)
 	}
 }
 
-void TGraph::Add(int v, int u, int w)
+void TGraph::Add(int v, int u, double w)
 {
 	Vert.push_back(make_pair( w, make_pair (v, u) ) );
 }
 
-int TGraph::Make_Tree( TDSU &DSU )
+void TGraph::Make_Tree( TDSU &DSU )
 {
-	int ans = 0;
 	for (int i = 0; i < size; i++)
 	{
 		int v = Vert[i].second.first;
 		int u = Vert[i].second.second;
-		int w = Vert[i].first;
+		double w = Vert[i].first;
 		if (DSU.Get(v) != DSU.Get(u))
 		{
-			ans += w;
+			Tree_Weight = Tree_Weight + w;
+			Tree[v].push_back( make_pair(u, w) );
+			Tree[u].push_back( make_pair(v, w) );
 			DSU.Unite(v, u);
 		}
 	}
-	return ans;
+}
+
+pair <double, double> Box_Muller (double x0, double y0, double sigma)
+{
+	double x, y, s = 0;
+
+	do
+	{
+		x = 2 * (double)rand()/(double)RAND_MAX - 1;
+		y = 2 * (double)rand()/(double)RAND_MAX - 1;
+		s = x * x + y * y;
+	}
+	while ((s >= 1) || (s <= eps));
+
+	double lns = log(s);
+	double z0 = x * sqrt(-2 * lns / s);
+	double z1 = y * sqrt(-2 * lns / s);
+
+	x = x0 + sigma * z0;
+	y = y0 + sigma * z1;
+	return(make_pair(x, y));
+}
+
+double dist( pair < double, double > x, pair < double, double > y)
+{
+	double result = sqrt((x.first - y.first) * (x.first - y.first) + (x.second - y.second) * (x.second - y.second));
+	return result;
 }
 
 int main()
@@ -93,24 +130,32 @@ int main()
 	freopen ("input.txt", "r", stdin);
 	freopen ("output.txt", "w", stdout);
 
-	int n, m;
+	srand((unsigned)time(0));
+	double n, m;
+	double s1, s2;
+	vector < pair < double, double > > points;
+	vector < pair < double, double > > center;
 	cin >> n >> m;
-	TGraph Graph(m * 2);
-	TDSU DSU(n);
+	cin >> s1 >> s2;
 
-	for (int i = 0; i < m; i++)
-	{
-		int v, u, w;
-		cin >> v >> u >> w;
-		//v--;
-		//u--;
-		Graph.Add(v, u, w);
-		Graph.Add(u, v, w);
-	}
+	for (int i = 0; i < n; i++)
+		center.push_back(Box_Muller(0, 0, s1));
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			points.push_back(Box_Muller(center[i].first, center[i].second, s2));
+
+	TGraph Graph (n, m);
+	TDSU DSU(n, m);
+
+	for (int i = 0; i < n * m; i++)
+		for (int j = 0; j < n * m; j++)
+			if (i != j)
+				Graph.Add(i, j, dist(points[i], points[j]));
 
 	sort(Graph.Vert.begin(), Graph.Vert.end());
+	Graph.Make_Tree( DSU );
 
-	cout << Graph.Make_Tree(DSU) << endl;
 	fclose(stdin);
 	fclose(stdout);
 	return 0;
