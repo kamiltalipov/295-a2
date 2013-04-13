@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 using std :: cin;
 using std :: cout;
@@ -6,12 +7,12 @@ using std :: vector;
 #include <algorithm>
 using std :: reverse;
 
+const size_t NOT_SET = -1;
+
 void find_neg_cycle1 (const vector<vector<double> >& moneyMatrix, vector<size_t>& cycle)
 {
     const size_t start_v = 0;
-    const double INF = 1000000000.0;
-    const size_t NOT_SET = -1;
-
+   
     vector<double> distance (moneyMatrix.size (), 0.0);
     vector<size_t> prev (moneyMatrix.size (), NOT_SET);
     distance[start_v] = 1.0;
@@ -51,11 +52,32 @@ void find_neg_cycle1 (const vector<vector<double> >& moneyMatrix, vector<size_t>
         }
 }
 
+void getCycle (const vector<vector<size_t> >& mid, size_t from, size_t to,
+               vector<bool>& in_cycle, vector<size_t>& cycle)
+{
+    if (mid[from][to] == NOT_SET)
+		return;
+	if (in_cycle[mid[from][to]])
+		return;
+	in_cycle[mid[from][to]] = true;
+
+	vector<size_t> cycle1, cycle2;
+	getCycle (mid, from, mid[from][to], in_cycle, cycle);
+	getCycle (mid, mid[from][to], to, in_cycle, cycle);
+	cycle.reserve (cycle1.size () + 1 + cycle2.size ());
+	cycle.insert (cycle.end (), cycle1.begin (), cycle1.end ());
+	cycle.push_back (mid[from][to]);
+	cycle.insert (cycle.end (), cycle1.begin (), cycle1.end ());
+	
+	//reverse (cycle.begin (), cycle.end ());
+}
+
 void find_neg_cycle2 (vector<vector<double> >& moneyMatrix, vector<size_t>& cycle)
 {
-    const size_t NOT_SET = -1;
-
-    vector<vector<size_t> > next (moneyMatrix.size (), vector<size_t> (moneyMatrix.size (), NOT_SET));
+    vector<vector<size_t> > mid (moneyMatrix.size (), vector<size_t> (moneyMatrix.size (), NOT_SET));
+	for (size_t i = 0; i < moneyMatrix.size (); ++i)
+		for (size_t j = 0; j < moneyMatrix.size (); ++j)
+			mid[i][j] = i;
     for (size_t i = 0; i < moneyMatrix.size (); ++i)
         for (size_t v = 0; v < moneyMatrix.size (); ++v)
             for (size_t u = 0; u < moneyMatrix.size (); ++u)
@@ -63,35 +85,22 @@ void find_neg_cycle2 (vector<vector<double> >& moneyMatrix, vector<size_t>& cycl
                 if (moneyMatrix[v][u] < moneyMatrix[v][i] * moneyMatrix[i][u])
                 {
                     moneyMatrix[v][u] = moneyMatrix[v][i] * moneyMatrix[i][u];
-                    next[v][u] = i;
+                    mid[v][u] = mid[i][u];
                 }
             }
-
-
-
-    vector<bool> in_cycle (moneyMatrix.size (), false);
-    for (size_t i = 0; i < moneyMatrix.size (); ++i)
-        if (moneyMatrix[i][i] > 1.0)
-        {
-            cycle.push_back (i);
-            in_cycle[i] = true;
-            size_t cur_v = next[i][i];
-            while (cur_v != i && !in_cycle[cur_v])
-            {
-                cycle.push_back (cur_v);
-                in_cycle[cur_v] = true;
-                cur_v = next[cur_v][i];
-            }
-
-            reverse (cycle.begin (), cycle.end ());
-
-            break;
-        }
+   
+	for (size_t v = 0; v < moneyMatrix.size (); ++v)
+		if (moneyMatrix[v][v] > 1.0)
+		{
+			vector<bool> in_cycle (moneyMatrix.size (), false);
+			getCycle (mid, v, v, in_cycle, cycle);
+			return;
+		}
 }
 
 int main ()
 {
-    size_t all_money = 0;
+	size_t all_money = 0;
     cin >> all_money;
     vector<vector<double> > moneyMatrix (all_money, vector<double> (all_money, 1.0));
     for (size_t i = 0; i < all_money; ++i)
