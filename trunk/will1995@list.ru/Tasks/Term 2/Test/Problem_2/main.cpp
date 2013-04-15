@@ -21,7 +21,7 @@ public:
 
 	TGraph();
 
-	bool DFS( int vertex, bool color );
+	void DFS( int vertex, bool ok );
 	void Add ( int v, int u );
 
 //private:
@@ -36,21 +36,23 @@ void TGraph::Add( int v, int u )
 	Vert[v].push_back(u);
 }
 
-bool TGraph::DFS (int v, bool color)
+void TGraph::DFS (int v, bool ok)
 {
-	comp[v] = color;
 	Used[v]= true;
 	for (int i = 0; i < Vert[v].size(); i++)
 	{
 		if (!Used[ Vert[v][i] ])
 		{
-			return DFS( Vert[v][i], !color );
+			comp[ Vert[v][i]] = !comp[v];
+			DFS( Vert[v][i], ok );
 		}
 		else
 			if (!(comp[v] ^ comp[ Vert[v][i] ]))
-				return false;
+			{
+				cout << "NO\n";
+				ok = false;
+			}
 	}
-	return true;
 }
 
 int main()
@@ -58,7 +60,7 @@ int main()
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 	int n, m;
-	cin >> n;
+	cin >> n >> m;
 
 	TGraph Graph (n);
 	for (int i = 0; i < n; i++)
@@ -69,16 +71,14 @@ int main()
 			if (x)
 				Graph.Add(i, j);
 		}
-
+	
 	bool ok = true;
 	for (int i = 0; i < n; i++)
 		if (!Graph.Used[i])
-			ok = ok && Graph.DFS ( i, true );
+			Graph.DFS ( i, ok );
 
 	if (ok)
-		cout << "Yes.\n";
-	else
-		cout << "No.\n";
+		cout << "YES\n";
 
 	fclose(stdin);
 	fclose(stdout);
