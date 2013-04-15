@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Двудольный граф", "Двудольный граф\Двудольный граф.vcxproj", "{7B8DEFD9-BB76-48C6-98F1-48B853E3351A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B8DEFD9-BB76-48C6-98F1-48B853E3351A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B8DEFD9-BB76-48C6-98F1-48B853E3351A}.Debug|Win32.Build.0 = Debug|Win32
+		{7B8DEFD9-BB76-48C6-98F1-48B853E3351A}.Release|Win32.ActiveCfg = Release|Win32
+		{7B8DEFD9-BB76-48C6-98F1-48B853E3351A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
