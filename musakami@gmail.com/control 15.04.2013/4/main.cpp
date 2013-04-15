@@ -63,6 +63,7 @@ public:
 int main()
 {
     int n, m;
+	cin >> n >> m;
     vector<Edge> graph;
     for (int i = 0; i < m; i++)
     {
