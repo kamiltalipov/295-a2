@@ -64,6 +64,10 @@
   <ItemGroup>
     <ClCompile Include="Исходный код.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\alexey-berdnikov%40yandex.ru\Task4\EulerTour\EulerTour\input.txt" />
+    <Text Include="..\..\..\..\alexey-berdnikov%40yandex.ru\Task4\EulerTour\EulerTour\output.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
