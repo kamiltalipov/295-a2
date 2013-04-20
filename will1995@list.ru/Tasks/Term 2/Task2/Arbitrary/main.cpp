@@ -31,6 +31,7 @@ public:
 
 	void Add( int v, int u, double weight );
 	void Floyd();
+	void FB();
 
 //private:
 	vector < vector < double > > Vert; 
@@ -45,6 +46,48 @@ void TGraph::Add( int v, int u, double w )
 	Vert[v][u] = w;
 }
 
+void TGraph::FB()
+{
+	vector < pair < double, pair < int, int > > > Edges;
+	for ( int i = 0; i < size; i++ )
+		for ( int j = 0; j < Vert[i].size(); j++ )
+			Edges.push_back( make_pair ( Vert[i][j], make_pair( i, j ) ) );
+
+	vector < vector < double > > dist( size, vector < double > ( size, 1.0 ) );
+	vector < int > prev( size, -1 );
+
+	int start = -1;
+	for ( int i = 0; i < size - 1; i++ )
+		for ( int v = 0; v < size; v++ )
+			for ( int u = 0; u < Edges.size(); u++ )
+			{
+				int v0 = Edges[u].second.first;
+				int u0 = Edges[u].second.second;
+				double w0 = Edges[u].first;
+
+				if ( ( dist[v][v0] * w0 ) > dist[v][u0] )
+				{
+					dist[v][u0] = max( dist[v][u0], dist[v][v0] * w0 );
+					prev[u0] = v0;
+					start = u0;
+				}
+			}
+
+	if ( start != -1 )
+	{
+		int tmp = prev[start];
+		Used.assign(size, 0);
+		Used[start] = true;
+		ans.push_back(start);
+		while ( ( tmp != start ) && ( !Used[tmp] ) )
+				{
+					ans.push_back( tmp );
+					Used[tmp] = true;
+					tmp = prev[tmp];
+				}
+	}
+}
+
 void TGraph::Floyd()
 {
 	for ( int k = 0; k < size; k++ )
@@ -57,7 +100,7 @@ void TGraph::Floyd()
 				}
 
 	for ( int i = 0; i < size; i++ )
-		if (Vert[i][i] > 1)
+		if ( Vert[i][i] > 1 )
 		{
 			ans.push_back( i );
 			Used[i] = true;
@@ -96,7 +139,7 @@ int main()
 	Graph.Floyd();
 
 	if ( Graph.ans.size() == 0 )
-		cout << "No infinite monay for you.\n";
+		cout << "No infinite money for you.\n";
 	else
 	{
 		cout << "Infinite money: ";
