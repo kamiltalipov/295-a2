@@ -17,7 +17,7 @@ public:
 		Used.assign( n, 0 );
 		
 		prev.resize( n );
-		prev.assign( n, 0 );
+		prev.assign( n, -1 );
 
 		dist.resize( n );
 		dist.assign( n, 0 );
@@ -63,6 +63,8 @@ bool TGraph::Any_Cycle( int v )
 
 int TGraph::Find_Cycle( int m )
 {
+	dist.assign( size, 0 );
+	prev.assign( size, -1 );
 	for ( int i = 0; i < size - 1; i++ )
 		for ( int v = 0; v < size - 1; v++ )
 			for ( int u = 0; u < Vert[v].size(); u++ )
@@ -77,23 +79,26 @@ int TGraph::Find_Cycle( int m )
 			}
 
 	int len = 0;
-	Used.assign( size, 0 );
-	cycle.clear();
 	for ( int i = 0; i < size; i++ )
 		if ( dist [i] < 0 )
 		{
+			len = 0;
+			Used.assign( size, 0 );
+			cycle.clear();
+	
 			cycle.push_back( i );
 			Used[i] = 1;
 			int tmp = prev[i];
-			while ( ( tmp != i ) && ( !Used[tmp] ) )
+			while ( ( tmp != -1 ) && ( !Used[tmp] ) && ( tmp != i ) )
 			{
 				len += dist[tmp];
 				cycle.push_back( tmp );
 				Used[tmp] = true;
 				tmp = prev[tmp];
 			}
+			if ( tmp = -1 )
+				continue;
 
-			reverse( cycle.begin(), cycle.end() );
 			break;
 		}
 		return len;
@@ -133,6 +138,7 @@ int main()
 		}
 
 		Graph.Find_Cycle( l );
+		reverse( Graph.cycle.begin(), Graph.cycle.end() );
 		for ( int i = 0; i < Graph.cycle.size(); i++ )
 			cout << Graph.cycle[i] << ' ';
 		cout << endl;
