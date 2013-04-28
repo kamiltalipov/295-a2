@@ -3,108 +3,149 @@ using std :: cin;
 using std :: cout;
 #include <vector>
 using std :: vector;
+#include <map>
+using std :: map;
 #include <utility>
 using std :: pair;
 using std :: make_pair;
+#include <algorithm>
+using std :: sort;
+
+#include "DSU.h"
+
+enum Color
+{
+    WHITE,
+    GRAY,
+    BLACK
+};
 
 typedef pair<size_t, size_t> Edge;
 typedef pair<size_t, Edge> CostEdge;
 
-const size_t INF = 2000000000;
-const CostEdge NOT_SET = make_pair (-1, make_pair (-1, -1));
+const size_t INF = 1000000000;
+const size_t NOT_SET = -1;
 
-template<typename T>
-void dfs (const vector<vector<pair<size_t, size_t> > >& g, size_t v,
-		  vector<T>& prev, const T& prev_not_set, vector<size_t>& len)
+void dfs (const vector<vector<pair<size_t, size_t> > >& g, const size_t v,
+          const vector<vector<size_t> >& query,
+          map<pair<size_t, size_t>, size_t>& ans,
+          vector<Color>& colors,
+          DSU& dsu)
 {
-	if (prev[v] != prev_not_set)
-		return;
-	
-	for (size_t i = 0; i < g[v].size (); ++i)
-	{
-		if (prev[g[v][i].first] == prev_not_set)
-		{
-			prev[g[v][i].first] = static_cast<T> (v);
-			len[g[v][i].first] = len[v] + g[v][i].second;
-			dfs (g, g[v][i].first, prev, prev_not_set, len);
-		}
-	}
+    if (colors[v] != WHITE)
+        return;
+    colors[v] = GRAY;
+
+    for (size_t i = 0; i < g[v].size (); ++i)
+    {
+        if (colors[g[v][i].first] == WHITE)
+        {
+            dfs (g, g[v][i].first, query, ans, colors, dsu);
+            dsu.union_sets (v, g[v][i].first);
+        }
+    }
+
+    colors[v] = BLACK;
+
+    for (size_t i = 0; i < query[v].size (); ++i)
+    {
+        if (colors[query[v][i]] == BLACK && ans.find (make_pair (query[v][i], v)) == ans.end ())
+            ans[make_pair (v, query[v][i])] = dsu.get_ancestor (query[v][i]);
+    }
 }
 
-void findPath (const vector<vector<pair<size_t, size_t> > >& g, size_t v, 
-			   vector<size_t>& prev, vector<size_t>& len)
+void getLCA (const vector<vector<pair<size_t, size_t> > >& g, const size_t v,
+             const vector<vector<size_t> >& query,
+             map<pair<size_t, size_t>, size_t>& ans)
 {
-	len[v] = 0;
-	dfs (g, v, prev, static_cast<size_t> (-1), len);
+    vector<Color> colors (g.size (), WHITE);
+    DSU dsu (g.size ());
+    dfs (g, v, query, ans, colors, dsu);
 }
 
-void getComponent (const vector<vector<pair<size_t, size_t> > >& g, size_t v,
-				   vector<bool>& component)
+void dfs (const vector<vector<pair<size_t, size_t> > >& g, const size_t v,
+          vector<size_t>& len, vector<size_t>& prev, vector<bool>& used)
 {
-	vector<size_t> len (g.size (), INF);
-	len[v] = 0;
-	dfs (g, v, component, false, len);
+    if (used[v])
+        return;
+    used[v] = true;
+
+    for (size_t i = 0; i < g[v].size (); ++i)
+        if (!used[g[v][i].first])
+        {
+            len[g[v][i].first] = len[v] + g[v][i].second;
+            prev[g[v][i].first] = v;
+            dfs (g, v, len, prev, used);
+        }
 }
 
-
-void findEscapePath (const vector<CostEdge>& g, const vector<vector<pair<size_t, size_t> > >& spt,
-					 size_t center_v, const Edge& deleted_edge, 
-					 vector<size_t>& escape_prev)
+void getLen (const vector<vector<pair<size_t, size_t> > >& spt, const size_t center_v,
+             vector<size_t>& len, vector<size_t>& prev)
 {
-	vector<size_t> prev (spt.size (), -1);
-	vector<size_t> len (spt.size (), INF);
-	findPath (spt, center_v, prev, len);
+    len[center_v] = 0;
+    vector<bool> used (spt.size (), false);
+    dfs (spt, center_v, len, prev, used);
+}
 
-	vector<bool> component1 (spt.size (), false);
-	getComponent (spt, deleted_edge.first, component1);
-	
-	escape_prev.reserve (prev.size ());
-	escape_prev.insert (escape_prev.end (), prev.begin (), prev.end ());
-	size_t deleted_v = deleted_edge.first;
-	if (component1[center_v] == component1[deleted_edge.first])
-		deleted_v = deleted_edge.second;
-	
-	vector<size_t> del_prev (spt.size (), -1);
-	vector<size_t> del_len (spt.size (), INF);
-	findPath (spt, deleted_v, del_prev, del_len);
-	CostEdge escape_edge = NOT_SET;
-	for (size_t i = 0; i < g.size (); ++i)
-		if (component1[g[i].second.first] != component1[g[i].second.second])
-		{
-			size_t del_component_v = component1[g[i].second.first],
-				   center_component_v = component1[g[i].second.second];
-			if (component1[del_component_v] != component1[deleted_v])
-			{
-				 del_component_v = component1[g[i].second.second];
-				 center_component_v = component1[g[i].second.first];
-			}
-			
-			if (escape_edge == NOT_SET)
-			{
-				escape_edge = make_pair (g[i].first, make_pair (del_component_v, center_component_v));
-			}
-			else if (del_len[del_component_v] + g[i].first + len[center_component_v] <
-					 del_len[escape_edge.second.first] + escape_edge.first + len[escape_edge.second.second])
-			{
-				escape_edge = make_pair (g[i].first, make_pair (del_component_v, center_component_v));
-			}
+class my_comp
+{
+public:
+    my_comp (vector<size_t>& _len)
+        :
+        len (_len)
+    {
+    }
 
-		}
+    bool operator () (const CostEdge& e1, const CostEdge& e2) const
+    {
+        return getCost (e1) < getCost (e2);
+    }
 
-	vector<size_t> escape_path;
-	escape_path.push_back (escape_edge.second.second);
-	size_t cur_v = escape_edge.second.first;
-	while (cur_v != deleted_v)
-	{
-		escape_path.push_back (cur_v);
-		cur_v = del_prev[cur_v];
-	}
+private:
+    vector<size_t>& len;
 
-	for	(int i = escape_path.size () - 1; i >= 0; --i)
-	{
-		escape_prev[cur_v] = escape_path[i];
-		cur_v = escape_path[i];
-	}
+    size_t getCost (const CostEdge& e) const
+    {
+        return len[e.second.first] + e.first + len[e.second.second];
+    }
+};
+
+void setEscapePath (vector<size_t>& escape_path, 
+                    const size_t cur_v, const size_t end_v, const size_t set_v,
+                    const vector<size_t>& prev)
+{
+    if (cur_v == end_v)
+        return;
+
+    if (escape_path[cur_v] != NOT_SET)
+    {
+        escape_path[cur_v] = set_v;
+        setEscapePath (escape_path, prev[cur_v], end_v, cur_v, prev);
+    }
+}
+
+void findEspacePath (const vector<vector<pair<size_t, size_t> > >& spt,
+                     vector<CostEdge>& g,
+                     const size_t center_v,
+                     vector<size_t>& prev,
+                     vector<size_t>& escape_path)
+{
+    vector<size_t> len (spt.size (), INF);
+    getLen (spt, center_v, len, prev);
+    sort (g.begin (), g.end (), my_comp (len));
+    
+    vector<vector<size_t> > query (spt.size (), vector<size_t> (spt.size ()));
+    for (size_t i = 0; i < spt.size (); ++i)
+        for (size_t j = 0; j < spt.size (); ++j)
+            query[i][j] = j;
+    map<pair<size_t, size_t>, size_t> lca;
+    getLCA (spt, center_v, query, lca);
+
+    for (size_t i = 0; i < g.size (); ++i)
+    {
+        setEscapePath (escape_path, g[i].second.first, lca[g[i].second], g[i].second.second, prev);
+        setEscapePath (escape_path, g[i].second.second, lca[g[i].second], g[i].second.first, prev);
+    }
 }
 
 int main ()
@@ -119,7 +160,7 @@ int main ()
 		spt[v].push_back (make_pair (u, cost));
 		spt[u].push_back (make_pair (v, cost));
 	}
-	
+
 	size_t all_non_mst_e = 0;
 	cin >> all_non_mst_e;
 	vector<CostEdge> g (all_non_mst_e);
@@ -129,10 +170,8 @@ int main ()
 	size_t center_v = 0;
 	cin >> center_v;
 	
-	Edge deleted_edge;
-	cin >> deleted_edge.first >> deleted_edge.second;
-	
-
+    vector<size_t> prev (all_v, -1), escape_path (all_v, -1);
+    findEspacePath (spt, g, center_v, prev, escape_path);
 
 	return 0;
 }
