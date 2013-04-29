@@ -29,7 +29,8 @@ int main()
 	//
 	const int s1l = s1.length(), s2l = s2.length();
 	map < pair < int, int >, val_type > ds;
-	set < pair < pair < int, int >, val_type > > q;
+	set < pair < pair < int, int >, val_type > , ls> q;
+  q.insert( make_pair( make_pair(0, 0), 0) );
 	ds[ make_pair(0, 0) ] = 0;
 	while ( true )
 	{
@@ -47,7 +48,7 @@ int main()
 			q.erase(make_pair( make_pair( x + 1, y + 1 ), rs.second ));
 			q.insert(make_pair ( make_pair( x + 1, y + 1), wt + s1l + s2l - x - y - 2));
 		}
-		rs = change(ds, x + 1, y, wt + (s1l + s2l - x - 1 - y) + 1);
+	  rs = change(ds, x + 1, y, wt + (s1l + s2l - x - 1 - y) + 1);
 		if (x < s1l && rs.first)
 		{
 			q.erase(make_pair( make_pair(x + 1, y), rs.second));
