@@ -101,6 +101,12 @@ int mark(const int v, const int top, const int value, DSU &dsu)
 	return united;
 }
 
+inline bool ls(const pair < int, pair < int, int > >& a, const pair < int, pair < int, int > >& b)
+{
+    return a.first + tree[a.second.first].weight + tree[a.second.second].weight <
+        b.first + tree[b.second.first].weight + tree[b.second.second].weight;
+}
+
 int main()
 {
 	int n, m;
@@ -124,7 +130,7 @@ int main()
 	seg_tree.resize(n * 4);
 	build_seg_tree(0, 0, base4tree.size());
 	for (int i = 0; i < m; ++i)
-	sort(ntedges.begin(), ntedges.end());
+	sort(ntedges.begin(), ntedges.end(), ls);
 	int united = 0;
 	ntedges.resize(m);
 	for (int i = 0; i < m; ++i)
