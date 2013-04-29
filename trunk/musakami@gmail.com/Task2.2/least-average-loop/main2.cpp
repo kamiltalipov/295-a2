@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define INF (1LL << 62) - 1
+const long long INF = (1LL << 62) - 1;
 
 struct Edge
 {
