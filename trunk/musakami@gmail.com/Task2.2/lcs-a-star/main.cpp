@@ -26,10 +26,7 @@ struct QUnit
 
 int estimate(int y, int x, int l1, int l2)
 {
-    if (l1 - y > l2)
-        return -l2;
-    else
-        return -l1 + y;
+    return abs(x - l2 + (l1 - y));
 }
 
 int main()
@@ -54,7 +51,8 @@ int main()
         int dist = q.top().distance;
         if (y == l1 && x == l2)
         {
-            cout << -dist;
+            cout << (l1 + l2 - dist) / 2 << " " << l1 - (l1 + l2 - dist) / 2 << " " << l2 - (l1 + l2 - dist) / 2 << endl;
+            cout << q.size() << " " << used.size();
             break;
         }
         q.pop();
@@ -62,11 +60,11 @@ int main()
             continue;
         used.insert(make_pair(y, x));
         if (y != l1 && x != l2 && s1[y] == s2[x])
-            q.push(QUnit(y + 1, x + 1, dist - 1, estimate(y + 1, x + 1, l1, l2)));
+            q.push(QUnit(y + 1, x + 1, dist, estimate(y + 1, x + 1, l1, l2)));
         if (y != l1)
-            q.push(QUnit(y + 1, x, dist, estimate(y + 1, x, l1, l2)));
+            q.push(QUnit(y + 1, x, dist + 1, estimate(y + 1, x, l1, l2)));
         if (x != l2)
-            q.push(QUnit(y, x + 1, dist, estimate(y, x + 1, l1, l2)));
+            q.push(QUnit(y, x + 1, dist + 1, estimate(y, x + 1, l1, l2)));
     }
     return 0;
 }
