@@ -12,19 +12,19 @@ struct a_star{
 	int x;
 	int y;
 	int dist;
-	int poten;
-	a_star (int x1, int y1, int dist1, int poten1){
+	double poten;
+	a_star (int x1, int y1, int dist1, double poten1){
 		x = x1;
 		y = y1;
 		dist = dist1;
 		poten = poten1;
 	}
 	bool operator <(const a_star &other) const{
-		return (dist+poten)>(other.dist+other.poten);
+		return ((double)dist+poten)>((double)other.dist+other.poten);
 	}
 };
 
-int potential (int x, int y, int len_1, int len_2){
+double potential (int x, int y, int len_1, int len_2){
 	if(len_1==len_2)
 		return abs(x-y);
 	else{
