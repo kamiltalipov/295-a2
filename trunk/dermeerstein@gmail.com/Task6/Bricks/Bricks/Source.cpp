@@ -59,11 +59,11 @@ Kuhn::Kuhn(Graph &g):graph(g), vis(graph.first_part), to_second(graph.first_part
 			ans += 1;
 		}
 	}
-	if (ans == graph.second_part)
+	if (ans == graph.first_part)
 	{
-		for (int i = 0; i < graph.second_part; ++i)
+		for (int i = 0; i < graph.first_part; ++i)
 		{
-			 cout << to_first[i] << " ";
+			 cout << to_second[i] << " ";
 		}
 	}
 	else
@@ -101,7 +101,7 @@ int main()
 	string s, t;
 	cin >> n;
 	cin >> s;
-	Graph g(n, s.size());
+	Graph g(s.size(), n);
 	for (int k = 0; k < n; ++k)
 	{
 		cin >> t;
@@ -110,7 +110,7 @@ int main()
 			for (int j = 0; j < t.size(); ++j)
 			{
 				if (s[i] == t[j])
-					g.AddEdge(Graph::Edge(k, i));
+					g.AddEdge(Graph::Edge(i, k));
 			}
 		}
 	}
