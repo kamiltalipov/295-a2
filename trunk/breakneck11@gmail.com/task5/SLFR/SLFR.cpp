@@ -23,6 +23,7 @@ public:
 			swap(a, b);
 		size[a] += size[b];
 		st[b] = a;
+		set_acc(a, ac);
 	}
 };
 
@@ -69,7 +70,7 @@ int get_min(int v, int tl, int tr, int l, int r)
 	return min(get_min(lch(v), tl, tm, l, tm), get_min(rch(v), tm, tr, tm, r));
 }
 
-inline int lcs(int a, int b)
+inline int lca(int a, int b)
 {
 	a = first4lcs[a], b = first4lcs[b];
 	if (a > b)
@@ -140,7 +141,7 @@ int main()
 	for (int i = 0; i < m && united < n - 1; ++i)
 	{
 		int a = ntedges[i].second.first, b = ntedges[i].second.second;
-		int vlca = lcs(a, b);
+		int vlca = lca(a, b);
 		united += mark(a, vlca, i, dsu);
 		united += mark(b, vlca, i, dsu);
 	}
