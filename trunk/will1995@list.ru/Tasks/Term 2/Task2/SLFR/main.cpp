@@ -147,8 +147,6 @@ void TGraph::Union( int v, int u, int new_anc )
 	v = Get(v);
 	u = Get(u);
 
-	if (rand() & 1)
-		swap(v, u);
 	Dsu[v] = u;
 	Anc[u] = new_anc;
 }
