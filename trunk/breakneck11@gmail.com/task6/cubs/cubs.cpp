@@ -1,29 +1,32 @@
 #include <iostream>
 #include <string>
-#include <algorihm>
+#include <algorithm>
 #include <vector>
 using namespace std;
 
-const int CUB_SIZE = 6, NONE = -1;
-int n, n1;
-vector < int > n2c, c2n, n2c_par, c2n_par;
-string s, name;
-vector < bool >  marks;
+const int NONE = -1; /* Is there any other good way to decline constants,
+used in a few functions, except passing them as arguments? */
 
-inline void connect(int let, int cub)
+inline void connect(vector < int >& n2c_par,
+    vector < int >& c2n_par, const int let, const int cub)
 {
     n2c_par[let] = cub;
     c2n_par[cub] = let;
 }
 
-bool try_par(int v)
+bool try_par(const vector < vector < int > >& n2c, const vector < vector < int > >& c2n,
+    vector < int >& n2c_par, vector < int >& c2n_par,
+    vector < bool >& marks, const int v)
 {
-    if (marks[v]) return false;
+    if (marks[v])
+   	 return false;
     marks[v] = true;
-    for (int i = 0; i < n2c[v].size(); ++i)
-        if (c2n_par[n2c[v][i]] == NONE || try_par(c2n_par[n2c[v][i]]))
+    for (int i = 0; i < n2c.size(); ++i)
+        if (c2n_par[ n2c[v][i] ] == NONE ||
+	try_par(n2c, c2n, n2c_par, c2n_par, marks, c2n_par[ n2c[v][i] ] )
+	)
         {
-            connect(v, n2c[v][i]);
+            connect(n2c_par, c2n_par, v, n2c[v][i]);
             return true;
         }
     return false;
@@ -31,11 +34,22 @@ bool try_par(int v)
 
 int main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
+    const int CUB_SIZE = 6, NONE = -1;
+    int n, n1;
+    vector < vector < int > > n2c, c2n;
+    vector < int > n2c_par, c2n_par;
+    string s, name;
+    vector < bool >  marks;
     cin >> n;
     cin >> name;
     n1 = name.length();
+    if (n < n1)
+    {
+    	cout << "NO";
+	return 0;
+    }
+    n2c.resize(n1);
+    c2n.resize(n);
     for (int i = 0; i < n; ++i)
     {
         cin >> s;
@@ -54,7 +68,7 @@ int main()
         for (int j = 0; j < n2c[i].size(); ++j)
             if (c2n_par[ n2c[i][j] ] == NONE)
             {
-                connect(i, n2c[i][j]);
+                connect(n2c_par, c2n_par, i, n2c[i][j]);
                 break;
             }
         if (n2c_par[i] == NONE)
@@ -62,9 +76,9 @@ int main()
             for (int j = 0; j < n2c[i].size(); ++j)
             {
                 fill(marks.begin(), marks.end(), false);
-                if (try_par(c2n_par[n2c[i][j]]))
+                if (try_par(n2c, c2n, n2c_par, c2n_par, marks, c2n_par[n2c[i][j]]))
                 {
-                    connect(i, n2c[i][j]);
+                    connect(n2c_par, c2n_par, i, n2c[i][j]);
                     break;
                 }
             }
