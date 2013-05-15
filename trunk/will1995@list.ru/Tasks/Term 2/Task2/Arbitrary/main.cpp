@@ -97,25 +97,23 @@ void TGraph::Floyd()
 				{
 					Vert[i][j] = Vert[i][k] * Vert[k][j];
 					Prev[i][j] = k;
+					if ( Vert[i][i] > 1 )
+					{
+						ans.push_back( i );
+						Used[i] = true;
+						int tmp = Prev[i][i];
+						while ( ( tmp != i ) && ( !Used[tmp] ) )
+						{
+							ans.push_back( tmp );
+							Used[tmp] = true;
+							tmp = Prev[tmp][i];
+						}
+	
+						reverse( ans.begin(), ans.end() );
+						return;
+					}
 				}
-
-	for ( int i = 0; i < size; i++ )
-		if ( Vert[i][i] > 1 )
-		{
-			ans.push_back( i );
-			Used[i] = true;
-			int tmp = Prev[i][i];
-			while ( ( tmp != i ) && ( !Used[tmp] ) )
-			{
-				ans.push_back( tmp );
-				Used[tmp] = true;
-				tmp = Prev[tmp][i];
-			}
-
-			
-			reverse( ans.begin(), ans.end() );
-			break;
-		}
+				//почему надо проверять условие как только мы на него наткнулись?
 }
 
 int main()
