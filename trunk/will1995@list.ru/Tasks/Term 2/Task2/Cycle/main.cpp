@@ -3,6 +3,7 @@
 #include <vector>
 #include <math.h>
 #include <algorithm>
+#include <list>
 
 using namespace std;
 
@@ -17,91 +18,120 @@ public:
 		Used.assign( n, 0 );
 		
 		prev.resize( n );
-		prev.assign( n, -1 );
+		next.resize( n );
+		
+		dist.resize( n, vector < float > ( n, 100000000 ) );
+		weight.resize( n, vector < float > ( n, 0 ) );
+		for ( int i = 0; i < n; i++ )
+			dist[0][i] = 0;
 
-		dist.resize( n );
-		dist.assign( n, 0 );
+		pi.resize( n, vector < int > ( n ) );
+		m.resize( n, 100000000 );
+		k_.resize( n, 0 );
+		path.resize( n );
 	};
+
 	TGraph();
 
-	void Add ( int v, int u, int weight );
-	int Find_Cycle( int weight );
-	bool Any_Cycle( int vertex );
+	void Add ( int v, int u, float weight );
+	int Solve();
+	bool DFS( int vertex, int count );
 
 //private:
-	vector < vector < pair < int, int > > > Vert; 
-	vector < int > cycle;
-	vector < int > prev;
-	vector < int > dist;
+	vector < vector < int > > Vert; 
+	vector < vector < int > > prev;
+	vector < vector < int > > pi;
+	vector < vector < int > > next;
+	vector < vector < float > > weight;
+	vector < vector < float > > dist;
+	vector < float > m;
+	vector < int > k_;
+	vector < int > path;
 	vector < char > Used;
 	int size;
 };
 
-void TGraph::Add(int v, int u, int w)
+void TGraph::Add(int v, int u, float w)
 {
-	Vert[v].push_back( make_pair ( u, w ) );
+	Vert[v].push_back( u );
+	weight[v][u] = w;
+	prev[u].push_back( v );
+	next[v].push_back( u );
 }
 
-bool TGraph::Any_Cycle( int v )
+int TGraph::Solve() 
 {
-	Used[v] = 1;
-	for ( int i = 0; i < Vert[v].size(); i++ ) 
+	for ( int k = 1; k < size; k++ )
 	{
-		int tmp = Vert[v][i].first;
-		if ( Used[tmp] == 0 ) 
+		for ( int v = 0; v < size; v++ )
 		{
-			if ( Any_Cycle ( tmp ) )  
-				return true;
-		}
-		else 
-			if ( Used[tmp] == 1 ) 
-				return true;
-	}
-	Used[v] = 2;
-	return false;
-}
-
-int TGraph::Find_Cycle( int m )
-{
-	dist.assign( size, 0 );
-	prev.assign( size, -1 );
-	for ( int i = 0; i < size - 1; i++ )
-		for ( int v = 0; v < size - 1; v++ )
-			for ( int u = 0; u < Vert[v].size(); u++ )
+			for ( int i = 0; i < prev[v].size(); i++ )
 			{
-				int tmp = Vert[v][u].first;
-				int w = Vert[v][u].second;
-				if ( dist[tmp] > ( dist[v] + w - m ) )
+				int u = prev[v][i];
+				if ( dist[k][v] > ( dist[k - 1][u] + weight[u][v] ) )
 				{
-					dist[tmp] = dist[v] + w - m;
-					prev[tmp] = v;
+					dist[k][v] = dist[k - 1][u] + weight[u][v];
+					pi[k][v] = u;
 				}
 			}
+		}
+	}
 
-	int len = 0;
-	for ( int i = 0; i < size; i++ )
-		if ( dist [i] < 0 )
-		{
-			len = 0;
-			Used.assign( size, 0 );
-			cycle.clear();
-	
-			cycle.push_back( i );
-			Used[i] = 1;
-			int tmp = prev[i];
-			while ( ( tmp != -1 ) && ( !Used[tmp] ) && ( tmp != i ) )
+	float l = 10000000;
+	int v_;
+	int length = 0;
+	int anslen = 0;
+	for ( int v = 0; v < size; v++ )
+	{
+		for ( int k = 0; k < size - 1; k++ )
+			if ( m[v] > ( dist[size - 1][v] - dist[k][v] ) / ( size - 1 - k ) )
 			{
-				len += dist[tmp];
-				cycle.push_back( tmp );
-				Used[tmp] = true;
-				tmp = prev[tmp];
+				m[v] = ( dist[size - 1][v] - dist[k][v] ) / ( size - 1 - k ) ;
+				length = size - 1 - k;
 			}
-			if ( tmp = -1 )
+
+		if ( l > m[v] )
+		{
+			l = m[v];
+			v_ = v;
+			anslen = length;
+		}
+	}
+
+	if ( l != 10000000 )
+	{
+		cout << l << endl;
+		vector < int > ans;
+		int v = v_;
+		ans.push_back(v);
+		for ( int i = 0; i < anslen; i++ )
+		{
+			v = pi[size - 1 - i][v];
+			ans.push_back( v );
+		}
+
+		for ( int i = 0; i < ans.size(); i++ )
+			cout << ans[i] << ' ';
+		cout << endl;
+		return 0;
+	}
+}
+
+bool TGraph::DFS( int v, int c )
+{
+	Used[v] = 1;
+	for ( int i = 0; i < Vert[v].size(); i++ )
+		if ( Used[ Vert[v][i] ] == 0 )
+			DFS( Vert[v][i], c + 1 );
+		else
+			if ( Used[ Vert[v][i] ] == 1)
+				return true;
+			else
 				continue;
 
-			break;
-		}
-		return len;
+	Used[v] = 2;
+	if ( c == size )
+		return false;
 }
 
 int main()
@@ -109,42 +139,21 @@ int main()
 	freopen ( "input.txt", "r", stdin );
 	freopen ( "output.txt", "w", stdout );
 
-	int n, m, max_e = -100000000, min_e = 10000000;
+	int n, m;
 	cin >> n >> m;
 	TGraph Graph( n );
 	for ( int i = 0; i < m; i++ )
 	{
-		int v, u, w;
+		int v, u;
+		float w;
 		cin >> v >> u >> w;
 		Graph.Add( v, u, w );
-		max_e = max( w, max_e );
-		min_e = min( w, min_e );
 	}
 
-	if ( Graph.Any_Cycle( 0 ) )
-	{
-		int l = min_e;
-		int r = max_e;
-		int len = 0;
-
-		while ( r > l )
-		{
-			int m = ( r + l ) / 2;
-			int tmp = Graph.Find_Cycle( m );
-			if ( tmp >= len )
-				l = m + 1;
-			else
-				r = m;
-		}
-
-		Graph.Find_Cycle( l );
-		reverse( Graph.cycle.begin(), Graph.cycle.end() );
-		for ( int i = 0; i < Graph.cycle.size(); i++ )
-			cout << Graph.cycle[i] << ' ';
-		cout << endl;
-	}
-	else 
+	if ( !Graph.DFS( 0, 0 ) ) 
 		cout << "No cycles, sorry.\n";
+	else
+		Graph.Solve();
 
 	fclose( stdin );
 	fclose( stdout );
