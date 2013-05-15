@@ -51,7 +51,7 @@ public:
 
 int TElement::set_potential ( int x, int y )
 {
-	return abs ( x - len1 ) + abs ( y - len2 );
+	return max( y * len1 / len2 - x, x * len2 / len1 - y);
 }
 
 void TElement::a_star()
