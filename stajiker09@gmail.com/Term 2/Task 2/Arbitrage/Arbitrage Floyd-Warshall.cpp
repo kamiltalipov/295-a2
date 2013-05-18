@@ -31,14 +31,28 @@ int main()
 			return 0;
 		}
 	}
+	bool check=false;
 	for(int k=0; k<n; ++k)
+	{
 		for(int i=0; i<n; ++i)
+		{
 			for(int j=0; j<n; ++j)
 				if(exchange_rate[i][j]<exchange_rate[i][k]*exchange_rate[k][j])
 				{
 					exchange_rate[i][j]=exchange_rate[i][k]*exchange_rate[k][j];
 					parent[i][j]=k;
+					if(i==j&&exchange_rate[i][j]>1)
+					{
+						check=true;
+						break;
+					}
 				}
+			if(check)
+				break;
+		}
+		if(check)
+			break;
+	}
 	for(int i=0; i<n; ++i)
 		if(exchange_rate[i][i]>1)
 		{
