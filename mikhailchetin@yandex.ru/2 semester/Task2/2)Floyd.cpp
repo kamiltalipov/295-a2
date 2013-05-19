@@ -32,15 +32,29 @@ int main()
 			p[i][j]=i;
 		}
 	}
+	bool flag=false;
 	for(int k=0;k<n;k++)
+	{
+		if(flag)
+			break;
 		for(int i=0;i<n;i++)
+		{
+			if(flag)
+				break;
 			for(int j=0;j<n;j++)
 				if(g[i][j]<g[i][k]*g[k][j])
 				{
 					g[i][j]=g[i][k]*g[k][j];
 					if(i!=k && j!=k)
 						p[i][j]=k;
+					if(i==j && g[i][j]>1)
+					{
+						flag=true;
+						break;
+					}
 				}
+		}
+	}
 
 	for(int i=0;i<n;i++)
 	{
