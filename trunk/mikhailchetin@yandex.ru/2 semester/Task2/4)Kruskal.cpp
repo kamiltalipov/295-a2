@@ -65,15 +65,28 @@ public:
 
 };
 
+void dfs_on_res(int v,vector<bool> &used,vector<int> &ans,vector<vector<int>> &res)
+{
+	ans.push_back(v);
+	used[v]=true;
+	for(int i=0;i<res[v].size();i++)
+		if(!used[res[v][i]])
+			dfs_on_res(res[v][i],used,ans,res);
+}
+
 int main()
 {
 	int m,n;
 	double s1,s2;
+	
+	vector<int> ans;
 	vector <edge> g;
 	vector <pair<double,double>> points;
 	int cost = 0;
-	vector <edge> res;
+	
 	cin>>n>>m;
+	vector<bool> used(n*m);
+	vector<vector<int>> res(n*m);
 	cin>>s1>>s2; 
 	for (int i = 0; i < n; i++)
     {
@@ -119,12 +132,13 @@ int main()
 		if (dsu.GetRoot(a) != dsu.GetRoot(b)) 
 		{
 			cost += l;
-			res.push_back (g[i]);
+			res[a].push_back(b);
+			res[b].push_back(a);
 			dsu.Unite(a,b);
 		}
 	}
-	cout<<cost;
-	for(int i=0;i<res.size();i++)
-		cout<<res[i].x1<<' '<<res[i].y1<<"   "<<res[i].x2<<' '<<res[i].y2<<endl;
+	dfs_on_res(0,used,ans,res);
+	for(int i=0;i<ans.size();i++)
+		cout<<points[ans[i]].first<<' '<<points[ans[i]].second<<endl;
 	return 0;
 }
