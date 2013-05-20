@@ -35,11 +35,13 @@ bool find_flow(const vector<vector<size_t>>& arcs, size_t m, vector<size_t>& pai
 	return false;
 }
 
-size_t max_flow(const vector<vector<size_t>>& arcs, size_t m)
+size_t max_flow(const vector<vector<size_t>>& arcs, size_t m, vector<size_t>& result)
 {
 	size_t answer = 0;
-	vector<size_t> pairs(arcs.size()+m,-1);
+	size_t n = arcs.size();
+	vector<size_t> pairs(n+m,-1);
 	while (find_flow(arcs,m,pairs)) ++answer;
+	result = vector<size_t>(pairs.begin()+n,pairs.end());
 	return answer;
 }
 
@@ -62,6 +64,13 @@ int main()
 				if (blocks[i].find(word[k]) != string::npos)
 					arcs[i].push_back(n+k);
 
-	cout << (max_flow(arcs,m)==m ? "YES" : "NO");
+	vector<size_t> pairs;
+	if (max_flow(arcs,m,pairs)==m) {
+		cout << "YES\n";
+		for (size_t i = 0; i<m; ++i)
+			cout << pairs[i]+1 << " ";
+	}
+	else
+		cout << "NO";
 	return 0;
 }
