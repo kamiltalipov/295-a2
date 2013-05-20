@@ -5,7 +5,7 @@
 #include <algorithm>
 using namespace std;
 
-enum colour { WHITE, BLACK };
+enum colour { WHITE, GREY, BLACK };
 
 void Kosaraju_DFS_visit(const vector<vector<unsigned>>& arcs, unsigned v, vector<colour>& colours, vector<unsigned>& list)
 {
@@ -57,8 +57,8 @@ void Tarjan_DFS_visit(const vector<vector<unsigned>>& arcs, unsigned v,
 	vector<colour>& colours, unsigned& time, vector<unsigned>& time_in, vector<unsigned>& low_time, vector<unsigned>& stack)
 {
 	assert(colours[v]==WHITE);
-	colours[v] = BLACK;
 	low_time[v] = time_in[v] = time++;
+	colours[v] = GREY;
 	stack.push_back(v);
 	for (unsigned i = 0; i < arcs[v].size(); ++i) {
 		unsigned w = arcs[v][i];
@@ -66,7 +66,7 @@ void Tarjan_DFS_visit(const vector<vector<unsigned>>& arcs, unsigned v,
 			Tarjan_DFS_visit(arcs,w,strongly_connected_components,colours,time,time_in,low_time,stack);
 			low_time[v] = min(low_time[v],low_time[w]);
 		}
-		else
+		else if (colours[w] == GREY)
 			low_time[v] = min(low_time[v],time_in[w]);
 	}
 	if (low_time[v] == time_in[v]) {
@@ -77,6 +77,7 @@ void Tarjan_DFS_visit(const vector<vector<unsigned>>& arcs, unsigned v,
 		do {
 			component.push_back(w = stack.back());
 			stack.pop_back();
+			colours[w] = BLACK;
 		} while (w != v);
 	}
 }
@@ -112,6 +113,7 @@ void read_graph(vector<vector<unsigned>>& arcs)
 	}
 
 }
+
 void check_Kosaraju()
 {
 	vector<vector<unsigned>> arcs;
